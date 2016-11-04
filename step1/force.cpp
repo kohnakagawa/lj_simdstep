@@ -161,6 +161,46 @@ force_pair(void){
 }
 //----------------------------------------------------------------------
 void
+force_pair2(void){
+  int k = 0;
+  int i = i_particles[k];
+  int j = j_particles[k];
+  double dx = q[j][X] - q[i][X];
+  double dy = q[j][Y] - q[i][Y];
+  double dz = q[j][Z] - q[i][Z];
+  double r2 = (dx * dx + dy * dy + dz * dz);
+  double r6, df;
+  for(k=1;k<number_of_pairs;k++){
+    r2 = (dx * dx + dy * dy + dz * dz);
+    r6 = r2 * r2 * r2;
+    df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+    if (r2 > CL2) df=0.0;
+    p[i][X] += df * dx;
+    p[i][Y] += df * dy;
+    p[i][Z] += df * dz;
+    p[j][X] -= df * dx;
+    p[j][Y] -= df * dy;
+    p[j][Z] -= df * dz;
+    i = i_particles[k];
+    j = j_particles[k];
+    dx = q[j][X] - q[i][X];
+    dy = q[j][Y] - q[i][Y];
+    dz = q[j][Z] - q[i][Z];
+    //if (r2 > CL2) continue;
+  }
+  r2 = (dx * dx + dy * dy + dz * dz);
+  r6 = r2 * r2 * r2;
+  df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+  if (r2 > CL2) df=0.0;
+  p[i][X] += df * dx;
+  p[i][Y] += df * dy;
+  p[i][Z] += df * dz;
+  p[j][X] -= df * dx;
+  p[j][Y] -= df * dy;
+  p[j][Z] -= df * dz;
+}
+//----------------------------------------------------------------------
+void
 force_sorted(void){
   const int pn =particle_number;
   for (int i=0; i<pn; i++) {
@@ -392,7 +432,7 @@ main(void) {
   std::cerr << "Number of pairs: " << number_of_pairs << std::endl;
   sortpair();
 #ifdef PAIR
-  measure(&force_pair, "pair");
+  measure(&force_pair2, "pair");
   for (int i = 0; i < 10; i++) {
     printf("%.10f %.10f %.10f\n", p[i][X], p[i][Y], p[i][Z]);
   }
@@ -402,7 +442,7 @@ main(void) {
     printf("%.10f %.10f %.10f\n", p[i][X], p[i][Y], p[i][Z]);
   }
 #else
-  measure(&force_pair, "pair");
+  measure(&force_pair2, "pair");
   measure(&force_sorted, "sorted");
   measure(&force_next, "sorted_next");
   measure(&force_intrin, "intrin");

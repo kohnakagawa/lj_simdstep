@@ -450,7 +450,7 @@ main(void) {
   std::cerr << "Number of pairs: " << number_of_pairs << std::endl;
   sortpair();
 #ifdef PAIR
-  measure(&force_pair_swp, "pair_swp");
+  measure(&force_pair, "pair");
   print_result();
 #elif INTRIN
   measure(&force_intrin, "intrin");

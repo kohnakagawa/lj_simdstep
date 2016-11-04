@@ -195,7 +195,7 @@ force_sorted(void){
 }
 //----------------------------------------------------------------------
 void
-force_next(void) {
+force_sorted_swp(void) {
   const int pn = particle_number;
   for (int i = 0; i < pn; i++) {
     const double qx_key = q[i][X];
@@ -377,6 +377,16 @@ savepair(void){
   ofs.write((char*)j_particles,sizeof(int)*MAX_PAIRS);
 }
 //----------------------------------------------------------------------
+void
+print_result(void){
+  for (int i = 0; i < 5; i++) {
+    printf("%.10f %.10f %.10f\n", p[i][X], p[i][Y], p[i][Z]);
+  }
+  for (int i = particle_number-5; i < particle_number; i++) {
+    printf("%.10f %.10f %.10f\n", p[i][X], p[i][Y], p[i][Z]);
+  }
+}
+//----------------------------------------------------------------------
 int
 main(void) {
   init();
@@ -393,18 +403,17 @@ main(void) {
   sortpair();
 #ifdef PAIR
   measure(&force_pair, "pair");
-  for (int i = 0; i < 10; i++) {
-    printf("%.10f %.10f %.10f\n", p[i][X], p[i][Y], p[i][Z]);
-  }
+  print_result();
 #elif INTRIN
   measure(&force_intrin, "intrin");
-  for (int i = 0; i < 10; i++) {
-    printf("%.10f %.10f %.10f\n", p[i][X], p[i][Y], p[i][Z]);
-  }
+  print_result();
+#elif S_SWP
+  measure(&force_sorted_swp, "sorted_swp");
+  print_result();
 #else
   measure(&force_pair, "pair");
   measure(&force_sorted, "sorted");
-  measure(&force_next, "sorted_next");
+  measure(&force_sorted_swp, "sorted_swp");
   measure(&force_intrin, "intrin");
 #endif
 }

@@ -282,9 +282,7 @@ force_pair_intrin(void){
     vdq_a2 = vdq_b2;
     vdq_a3 = vdq_b3;
     vdq_a4 = vdq_b4;
-    p4(a1);
-    print256(vdq_a1);
-    exit(1);
+    // ここまでOK
 
     i_b1 = i_particles[k];
     j_b1 = j_particles[k];
@@ -308,13 +306,79 @@ force_pair_intrin(void){
     dy_b4 = q[j_b4][Y] - q[i_b4][Y];
     dz_b4 = q[j_b4][Z] - q[i_b4][Z];
 
+    v4df vqi_b1 = _mm256_load_pd((double*)(q + i_b1));
+    v4df vqj_b1 = _mm256_load_pd((double*)(q + j_b1));
+    vdq_b1 = vqj_b1 - vqi_b1;
 
+    v4df vqi_b2 = _mm256_load_pd((double*)(q + i_b2));
+    v4df vqj_b2 = _mm256_load_pd((double*)(q + j_b2));
+    vdq_b2 = vqj_b2 - vqi_b2;
 
+    v4df vqi_b3 = _mm256_load_pd((double*)(q + i_b3));
+    v4df vqj_b3 = _mm256_load_pd((double*)(q + j_b3));
+    vdq_b3 = vqj_b3 - vqi_b3;
 
+    v4df vqi_b4 = _mm256_load_pd((double*)(q + i_b4));
+    v4df vqj_b4 = _mm256_load_pd((double*)(q + j_b4));
+    vdq_b4 = vqj_b4 - vqi_b4;
+    /*
+    p4(b1);print256(vdq_b1);
+    p4(b2);print256(vdq_b2);
+    p4(b3);print256(vdq_b3);
+    p4(b4);print256(vdq_b4);
+    */
+    // ここまでOK
     const double r2_1 = (dx_a1 * dx_a1 + dy_a1 * dy_a1 + dz_a1 * dz_a1);
+    v4df vr2_1x = vdq_a1*vdq_a1; 
+    v4df vr2_1y = _mm256_permute4x64_pd(vr2_1x, 201);
+    v4df vr2_1z = _mm256_permute4x64_pd(vr2_1x, 210);
+    v4df vr2_1 =  vr2_1x + vr2_1y + vr2_1z;
+    /*
+    printf("%.10f\n",r2_1);
+    print256(vr2_1);
+    exit(1);//ここまでOK
+    */
+
     const double r2_2 = (dx_a2 * dx_a2 + dy_a2 * dy_a2 + dz_a2 * dz_a2);
+    v4df vr2_2x = vdq_a2*vdq_a2; 
+    v4df vr2_2y = _mm256_permute4x64_pd(vr2_2x, 201);
+    v4df vr2_2z = _mm256_permute4x64_pd(vr2_2x, 210);
+    v4df vr2_2 =  vr2_2x + vr2_2y + vr2_2z;
+    /*
+    printf("%.10f\n",r2_2);
+    print256(vr2_2);
+    exit(1);//ここまでOK
+    */
+
     const double r2_3 = (dx_a3 * dx_a3 + dy_a3 * dy_a3 + dz_a3 * dz_a3);
+    v4df vr2_3x = vdq_a3*vdq_a3; 
+    v4df vr2_3y = _mm256_permute4x64_pd(vr2_3x, 201);
+    v4df vr2_3z = _mm256_permute4x64_pd(vr2_3x, 210);
+    v4df vr2_3 =  vr2_3x + vr2_3y + vr2_3z;
+    /*
+    printf("%.10f\n",r2_3);
+    print256(vr2_3);
+    exit(1);//ここまでOK
+    */
     const double r2_4 = (dx_a4 * dx_a4 + dy_a4 * dy_a4 + dz_a4 * dz_a4);
+    v4df vr2_4x = vdq_a4*vdq_a4; 
+    v4df vr2_4y = _mm256_permute4x64_pd(vr2_4x, 201);
+    v4df vr2_4z = _mm256_permute4x64_pd(vr2_4x, 210);
+    v4df vr2_4 =  vr2_4x + vr2_4y + vr2_4z;
+    /*
+    printf("%.10f\n",r2_4);
+    print256(vr2_4);
+    exit(1);//ここまでOK
+    */
+    v4df vr2_13 = _mm256_unpacklo_pd(vr2_1, vr2_3);
+    v4df vr2_24 = _mm256_unpacklo_pd(vr2_2, vr2_4);
+    v4df vr2 = _mm256_shuffle_pd(vr2_13, vr2_24, 12);
+    /*
+    print256(vr2);
+    printf("%.10f %.10f %.10f %.10f\n",r2_1,r2_2,r2_3,r2_4);
+    exit(1);//ここまでOK
+    */
+
     const double r6_1 = r2_1 * r2_1 * r2_1;
     const double r6_2 = r2_2 * r2_2 * r2_2;
     const double r6_3 = r2_3 * r2_3 * r2_3;

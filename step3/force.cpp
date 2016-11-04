@@ -209,6 +209,55 @@ force_pair_swp(void){
 }
 //----------------------------------------------------------------------
 void
+force_pair_intrin(void){
+  int k = 0;
+  int i_a = i_particles[k];
+  int j_a = j_particles[k];
+  double dx_b = q[j_a][X] - q[i_a][X];
+  double dy_b = q[j_a][Y] - q[i_a][Y];
+  double dz_b = q[j_a][Z] - q[i_a][Z];
+  double dx_a,dy_a,dz_a;
+  int i_b, j_b;
+  double df;
+  for(k=1;k<number_of_pairs;k++){
+    dx_a = dx_b; 
+    dy_a = dy_b; 
+    dz_a = dz_b; 
+    i_b = i_particles[k];
+    j_b = j_particles[k];
+    dx_b = q[j_b][X] - q[i_b][X];
+    dy_b = q[j_b][Y] - q[i_b][Y];
+    dz_b = q[j_b][Z] - q[i_b][Z];
+    const double r2 = (dx_a * dx_a + dy_a * dy_a + dz_a * dz_a);
+    const double r6 = r2 * r2 * r2;
+    df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+    if (r2 > CL2) df=0.0;
+    p[i_a][X] += df * dx_a;
+    p[i_a][Y] += df * dy_a;
+    p[i_a][Z] += df * dz_a;
+    p[j_a][X] -= df * dx_a;
+    p[j_a][Y] -= df * dy_a;
+    p[j_a][Z] -= df * dz_a;
+    i_a = i_b;
+    j_a = j_b;
+  }
+  dx_a = dx_b; 
+  dy_a = dy_b; 
+  dz_a = dz_b; 
+  const double r2 = (dx_a * dx_a + dy_a * dy_a + dz_a * dz_a);
+  const double r6 = r2 * r2 * r2;
+  df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+  if (r2 > CL2) df=0.0;
+  p[i_a][X] += df * dx_a;
+  p[i_a][Y] += df * dy_a;
+  p[i_a][Z] += df * dz_a;
+  p[j_a][X] -= df * dx_a;
+  p[j_a][Y] -= df * dy_a;
+  p[j_a][Z] -= df * dz_a;
+}
+
+//----------------------------------------------------------------------
+void
 force_sorted(void){
   const int pn =particle_number;
   for (int i=0; i<pn; i++) {
@@ -461,9 +510,13 @@ main(void) {
 #elif P_SWP
   measure(&force_pair_swp, "pair_swp");
   print_result();
+#elif P_INTRIN
+  measure(&force_pair_intrin, "pair_intrin");
+  print_result();
 #else
   measure(&force_pair, "pair");
   measure(&force_pair_swp, "pair_swp");
+  measure(&force_pair_intrin, "pair_intrin");
   measure(&force_sorted, "sorted");
   measure(&force_sorted_swp, "sorted_swp");
   measure(&force_sorted_intrin, "sorted_intrin");

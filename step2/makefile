@@ -20,7 +20,7 @@ s_swp.out: force.cpp
 clean:
 	rm -f $(TARGET)
 
-test: p_swp.out intrin.out
+test: p_swp.out s_intrin.out
 	./p_swp.out > p_swp.txt
-	./intrin.out > intrin.txt
-	diff p_swp.txt intrin.txt
+	./s_intrin.out > s_intrin.txt
+	diff p_swp.txt s_intrin.txt

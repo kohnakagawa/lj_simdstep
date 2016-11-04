@@ -1,6 +1,11 @@
-*.out
+a.out
+pair.out
+p_swp.out
+p_intrin.out
+s_swp.out
+s_intrin.out
 pair.dat
-intrin.txt
+s_intrin.txt
 pair.txt
 p_swp.txt
 *.swp

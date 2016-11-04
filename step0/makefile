@@ -17,7 +17,7 @@ s_swp.out: force.cpp
 clean:
 	rm -f $(TARGET)
 
-test: pair.out intrin.out
-	./pair.out > p_swp.txt
-	./intrin.out > intrin.txt
-	diff p_swp.txt intrin.txt
+test: pair.out s_intrin.out
+	./pair.out > pair.txt
+	./s_intrin.out > s_intrin.txt
+	diff pair.txt s_intrin.txt

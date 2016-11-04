@@ -258,23 +258,7 @@ force_pair_intrin(void){
     p[j][Y] -= df * dy;
     p[j][Z] -= df * dz;
   }
-  /*
-  dx_a = dx_b; 
-  dy_a = dy_b; 
-  dz_a = dz_b; 
-  const double r2 = (dx_a * dx_a + dy_a * dy_a + dz_a * dz_a);
-  const double r6 = r2 * r2 * r2;
-  df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
-  if (r2 > CL2) df=0.0;
-  p[i_a][X] += df * dx_a;
-  p[i_a][Y] += df * dy_a;
-  p[i_a][Z] += df * dz_a;
-  p[j_a][X] -= df * dx_a;
-  p[j_a][Y] -= df * dy_a;
-  p[j_a][Z] -= df * dz_a;
-  */
 }
-
 //----------------------------------------------------------------------
 void
 force_sorted(void){

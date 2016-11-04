@@ -1,4 +1,4 @@
-TARGET=a.out pair.out intrin.out s_swp.out
+TARGET=a.out pair.out intrin.out s_swp.out p_swp.out
 
 all: $(TARGET)
 
@@ -7,6 +7,9 @@ a.out: force.cpp
 
 pair.out: force.cpp
 	icpc -O3 -xHOST -std=c++11 -DPAIR $< -o $@
+
+p_swp.out: force.cpp
+	icpc -O3 -xHOST -std=c++11 -DP_SWP $< -o $@
 
 intrin.out: force.cpp
 	icpc -O3 -xHOST -std=c++11 -DINTRIN $< -o $@
@@ -17,7 +20,7 @@ s_swp.out: force.cpp
 clean:
 	rm -f $(TARGET)
 
-test: pair.out intrin.out
-	./pair.out > pair.txt
+test: p_swp.out intrin.out
+	./p_swp.out > p_swp.txt
 	./intrin.out > intrin.txt
-	diff pair.txt intrin.txt
+	diff p_swp.txt intrin.txt

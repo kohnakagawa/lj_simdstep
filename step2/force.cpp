@@ -458,6 +458,9 @@ main(void) {
 #elif S_SWP
   measure(&force_sorted_swp, "sorted_swp");
   print_result();
+#elif P_SWP
+  measure(&force_pair_swp, "pair_swp");
+  print_result();
 #else
   measure(&force_pair, "pair");
   measure(&force_pair_swp, "pair_swp");

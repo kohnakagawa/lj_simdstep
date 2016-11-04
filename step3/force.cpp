@@ -219,7 +219,7 @@ force_pair_intrin(void){
   double dx_a,dy_a,dz_a;
   int i_b, j_b;
   double df;
-  for(k=1;k<number_of_pairs;k++){
+  for(k=1;k<(number_of_pairs)/4*4;k++){
     dx_a = dx_b; 
     dy_a = dy_b; 
     dz_a = dz_b; 
@@ -241,7 +241,7 @@ force_pair_intrin(void){
     i_a = i_b;
     j_a = j_b;
   }
-  for(k=number_of_pairs-1;k<number_of_pairs;k++){
+  for(k=(number_of_pairs)/4*4-1;k<number_of_pairs;k++){
     const int i = i_particles[k];
     const int j = j_particles[k];
     double dx = q[j][X] - q[i][X];

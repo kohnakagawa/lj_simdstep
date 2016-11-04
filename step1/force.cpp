@@ -186,7 +186,6 @@ force_pair2(void){
     dx = q[j][X] - q[i][X];
     dy = q[j][Y] - q[i][Y];
     dz = q[j][Z] - q[i][Z];
-    //if (r2 > CL2) continue;
   }
   r2 = (dx * dx + dy * dy + dz * dz);
   r6 = r2 * r2 * r2;

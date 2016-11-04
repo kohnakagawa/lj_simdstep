@@ -211,37 +211,126 @@ force_pair_swp(void){
 void
 force_pair_intrin(void){
   int k = 0;
-  int i_a = i_particles[k];
-  int j_a = j_particles[k];
-  double dx_b = q[j_a][X] - q[i_a][X];
-  double dy_b = q[j_a][Y] - q[i_a][Y];
-  double dz_b = q[j_a][Z] - q[i_a][Z];
-  double dx_a,dy_a,dz_a;
-  int i_b, j_b;
-  double df;
-  for(k=1;k<(number_of_pairs)/4*4;k++){
-    dx_a = dx_b; 
-    dy_a = dy_b; 
-    dz_a = dz_b; 
-    i_b = i_particles[k];
-    j_b = j_particles[k];
-    dx_b = q[j_b][X] - q[i_b][X];
-    dy_b = q[j_b][Y] - q[i_b][Y];
-    dz_b = q[j_b][Z] - q[i_b][Z];
-    const double r2 = (dx_a * dx_a + dy_a * dy_a + dz_a * dz_a);
-    const double r6 = r2 * r2 * r2;
-    df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
-    if (r2 > CL2) df=0.0;
-    p[i_a][X] += df * dx_a;
-    p[i_a][Y] += df * dy_a;
-    p[i_a][Z] += df * dz_a;
-    p[j_a][X] -= df * dx_a;
-    p[j_a][Y] -= df * dy_a;
-    p[j_a][Z] -= df * dz_a;
-    i_a = i_b;
-    j_a = j_b;
+  int i_a1 = i_particles[k];
+  int j_a1 = j_particles[k];
+  int i_a2 = i_particles[k+1];
+  int j_a2 = j_particles[k+1];
+  int i_a3 = i_particles[k+2];
+  int j_a3 = j_particles[k+2];
+  int i_a4 = i_particles[k+3];
+  int j_a4 = j_particles[k+3];
+  double dx_b1 = q[j_a1][X] - q[i_a1][X];
+  double dy_b1 = q[j_a1][Y] - q[i_a1][Y];
+  double dz_b1 = q[j_a1][Z] - q[i_a1][Z];
+  double dx_b2 = q[j_a2][X] - q[i_a2][X];
+  double dy_b2 = q[j_a2][Y] - q[i_a2][Y];
+  double dz_b2 = q[j_a2][Z] - q[i_a2][Z];
+  double dx_b3 = q[j_a3][X] - q[i_a3][X];
+  double dy_b3 = q[j_a3][Y] - q[i_a3][Y];
+  double dz_b3 = q[j_a3][Z] - q[i_a3][Z];
+  double dx_b4 = q[j_a4][X] - q[i_a4][X];
+  double dy_b4 = q[j_a4][Y] - q[i_a4][Y];
+  double dz_b4 = q[j_a4][Z] - q[i_a4][Z];
+  double dx_a1,dy_a1,dz_a1;
+  double dx_a2,dy_a2,dz_a2;
+  double dx_a3,dy_a3,dz_a3;
+  double dx_a4,dy_a4,dz_a4;
+  int i_b1, j_b1;
+  int i_b2, j_b2;
+  int i_b3, j_b3;
+  int i_b4, j_b4;
+  double df_1,df_2,df_3,df_4;
+  for(k=4;k<(number_of_pairs)/4*4;k+=4){
+    dx_a1 = dx_b1; 
+    dy_a1 = dy_b1; 
+    dz_a1 = dz_b1; 
+    dx_a2 = dx_b2; 
+    dy_a2 = dy_b2; 
+    dz_a2 = dz_b2; 
+    dx_a3 = dx_b3; 
+    dy_a3 = dy_b3; 
+    dz_a3 = dz_b3; 
+    dx_a4 = dx_b4; 
+    dy_a4 = dy_b4; 
+    dz_a4 = dz_b4; 
+
+    i_b1 = i_particles[k];
+    j_b1 = j_particles[k];
+    i_b2 = i_particles[k+1];
+    j_b2 = j_particles[k+1];
+    i_b3 = i_particles[k+2];
+    j_b3 = j_particles[k+2];
+    i_b4 = i_particles[k+3];
+    j_b4 = j_particles[k+3];
+
+    dx_b1 = q[j_b1][X] - q[i_b1][X];
+    dy_b1 = q[j_b1][Y] - q[i_b1][Y];
+    dz_b1 = q[j_b1][Z] - q[i_b1][Z];
+    dx_b2 = q[j_b2][X] - q[i_b2][X];
+    dy_b2 = q[j_b2][Y] - q[i_b2][Y];
+    dz_b2 = q[j_b2][Z] - q[i_b2][Z];
+    dx_b3 = q[j_b3][X] - q[i_b3][X];
+    dy_b3 = q[j_b3][Y] - q[i_b3][Y];
+    dz_b3 = q[j_b3][Z] - q[i_b3][Z];
+    dx_b4 = q[j_b4][X] - q[i_b4][X];
+    dy_b4 = q[j_b4][Y] - q[i_b4][Y];
+    dz_b4 = q[j_b4][Z] - q[i_b4][Z];
+
+    const double r2_1 = (dx_a1 * dx_a1 + dy_a1 * dy_a1 + dz_a1 * dz_a1);
+    const double r2_2 = (dx_a2 * dx_a2 + dy_a2 * dy_a2 + dz_a2 * dz_a2);
+    const double r2_3 = (dx_a3 * dx_a3 + dy_a3 * dy_a3 + dz_a3 * dz_a3);
+    const double r2_4 = (dx_a4 * dx_a4 + dy_a4 * dy_a4 + dz_a4 * dz_a4);
+    const double r6_1 = r2_1 * r2_1 * r2_1;
+    const double r6_2 = r2_2 * r2_2 * r2_2;
+    const double r6_3 = r2_3 * r2_3 * r2_3;
+    const double r6_4 = r2_4 * r2_4 * r2_4;
+    df_1 = ((24.0 * r6_1 - 48.0) / (r6_1 * r6_1 * r2_1)) * dt;
+    df_2 = ((24.0 * r6_2 - 48.0) / (r6_2 * r6_2 * r2_2)) * dt;
+    df_3 = ((24.0 * r6_3 - 48.0) / (r6_3 * r6_3 * r2_3)) * dt;
+    df_4 = ((24.0 * r6_4 - 48.0) / (r6_4 * r6_4 * r2_4)) * dt;
+
+    if (r2_1 > CL2) df_1=0.0;
+    if (r2_2 > CL2) df_2=0.0;
+    if (r2_3 > CL2) df_3=0.0;
+    if (r2_4 > CL2) df_4=0.0;
+    p[i_a1][X] += df_1 * dx_a1;
+    p[i_a1][Y] += df_1 * dy_a1;
+    p[i_a1][Z] += df_1 * dz_a1;
+    p[j_a1][X] -= df_1 * dx_a1;
+    p[j_a1][Y] -= df_1 * dy_a1;
+    p[j_a1][Z] -= df_1 * dz_a1;
+
+    p[i_a2][X] += df_2 * dx_a2;
+    p[i_a2][Y] += df_2 * dy_a2;
+    p[i_a2][Z] += df_2 * dz_a2;
+    p[j_a2][X] -= df_2 * dx_a2;
+    p[j_a2][Y] -= df_2 * dy_a2;
+    p[j_a2][Z] -= df_2 * dz_a2;
+
+    p[i_a3][X] += df_3 * dx_a3;
+    p[i_a3][Y] += df_3 * dy_a3;
+    p[i_a3][Z] += df_3 * dz_a3;
+    p[j_a3][X] -= df_3 * dx_a3;
+    p[j_a3][Y] -= df_3 * dy_a3;
+    p[j_a3][Z] -= df_3 * dz_a3;
+
+    p[i_a4][X] += df_4 * dx_a4;
+    p[i_a4][Y] += df_4 * dy_a4;
+    p[i_a4][Z] += df_4 * dz_a4;
+    p[j_a4][X] -= df_4 * dx_a4;
+    p[j_a4][Y] -= df_4 * dy_a4;
+    p[j_a4][Z] -= df_4 * dz_a4;
+
+    i_a1 = i_b1;
+    j_a1 = j_b1;
+    i_a2 = i_b2;
+    j_a2 = j_b2;
+    i_a3 = i_b3;
+    j_a3 = j_b3;
+    i_a4 = i_b4;
+    j_a4 = j_b4;
   }
-  for(k=(number_of_pairs)/4*4-1;k<number_of_pairs;k++){
+  for(k=(number_of_pairs)/4*4-4;k<number_of_pairs;k++){
     const int i = i_particles[k];
     const int j = j_particles[k];
     double dx = q[j][X] - q[i][X];

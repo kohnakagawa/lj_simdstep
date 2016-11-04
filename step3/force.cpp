@@ -241,6 +241,24 @@ force_pair_intrin(void){
     i_a = i_b;
     j_a = j_b;
   }
+  for(k=number_of_pairs-1;k<number_of_pairs;k++){
+    const int i = i_particles[k];
+    const int j = j_particles[k];
+    double dx = q[j][X] - q[i][X];
+    double dy = q[j][Y] - q[i][Y];
+    double dz = q[j][Z] - q[i][Z];
+    double r2 = (dx * dx + dy * dy + dz * dz);
+    if (r2 > CL2) continue;
+    double r6 = r2 * r2 * r2;
+    double df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+    p[i][X] += df * dx;
+    p[i][Y] += df * dy;
+    p[i][Z] += df * dz;
+    p[j][X] -= df * dx;
+    p[j][Y] -= df * dy;
+    p[j][Z] -= df * dz;
+  }
+  /*
   dx_a = dx_b; 
   dy_a = dy_b; 
   dz_a = dz_b; 
@@ -254,6 +272,7 @@ force_pair_intrin(void){
   p[j_a][X] -= df * dx_a;
   p[j_a][Y] -= df * dy_a;
   p[j_a][Z] -= df * dz_a;
+  */
 }
 
 //----------------------------------------------------------------------

@@ -24,6 +24,6 @@ clean:
 	rm -f $(TARGET)
 
 test: p_intrin.out s_intrin.out
-	./p_intrin.out > p_swp.txt
+	./p_intrin.out > p_intrin.txt
 	./s_intrin.out > s_intrin.txt
 	diff p_intrin.txt s_intrin.txt

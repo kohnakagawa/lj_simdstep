@@ -1,4 +1,4 @@
-TARGET=a.out pair.out intrin.out s_swp.out
+TARGET=a.out pair.out s_intrin.out s_swp.out
 
 all: $(TARGET)
 
@@ -8,8 +8,8 @@ a.out: force.cpp
 pair.out: force.cpp
 	icpc -O3 -xHOST -std=c++11 -DPAIR $< -o $@
 
-intrin.out: force.cpp
-	icpc -O3 -xHOST -std=c++11 -DINTRIN $< -o $@
+s_intrin.out: force.cpp
+	icpc -O3 -xHOST -std=c++11 -DS_INTRIN $< -o $@
 
 s_swp.out: force.cpp
 	icpc -O3 -xHOST -std=c++11 -DS_SWP $< -o $@

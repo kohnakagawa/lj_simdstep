@@ -288,7 +288,7 @@ force_sorted_swp(void) {
 }
 //----------------------------------------------------------------------
 void
-force_intrin(void) {
+force_sorted_intrin(void) {
   const v4df vzero = _mm256_set_pd(0, 0, 0, 0);
   const v4df vcl2 = _mm256_set_pd(CL2, CL2, CL2, CL2);
   const v4df vc24 = _mm256_set_pd(24 * dt, 24 * dt, 24 * dt, 24 * dt);
@@ -443,8 +443,8 @@ main(void) {
 #ifdef PAIR
   measure(&force_pair, "pair");
   print_result();
-#elif INTRIN
-  measure(&force_intrin, "intrin");
+#elif S_INTRIN
+  measure(&force_sorted_intrin, "sorted_intrin");
   print_result();
 #elif S_SWP
   measure(&force_sorted_swp, "sorted_swp");
@@ -457,7 +457,7 @@ main(void) {
   measure(&force_pair_swp, "pair_swp");
   measure(&force_sorted, "sorted");
   measure(&force_sorted_swp, "sorted_swp");
-  measure(&force_intrin, "intrin");
+  measure(&force_sorted_intrin, "sorted_intrin");
 #endif
 }
 //----------------------------------------------------------------------

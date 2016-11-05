@@ -401,6 +401,7 @@ force_pair_intrin(void){
 
     v4df vdf = (vc24 * vr6 - vc48) / (vr6 * vr6 * vr2);
 
+
     if (r2_1 > CL2) df_1=0.0;
     if (r2_2 > CL2) df_2=0.0;
     if (r2_3 > CL2) df_3=0.0;
@@ -410,15 +411,23 @@ force_pair_intrin(void){
     vdf = _mm256_blendv_pd(vdf, vzero, mask);
 
 /*
+    if (r2_1 > CL2){
+      print256(vdf);
+      printf("%.10f %.10f %.10f %.10f\n",df_1,df_2,df_3,df_4);
+      exit(1);
+    }
+    */
+
+/*
     print256(vdf);
     printf("%.10f %.10f %.10f %.10f\n",df_1,df_2,df_3,df_4);
-    */
+    exit(1);
+*/
 
     v4df vdf_1 = _mm256_permute4x64_pd(vdf, 0);
     v4df vdf_2 = _mm256_permute4x64_pd(vdf, 85);
     v4df vdf_3 = _mm256_permute4x64_pd(vdf, 170);
     v4df vdf_4 = _mm256_permute4x64_pd(vdf, 255);
-
 /*
     print256(vdf_1);
     print256(vdf_2);
@@ -429,24 +438,38 @@ force_pair_intrin(void){
 
     v4df vpi_1 = _mm256_load_pd((double*)(p + i_a1));
     vpi_1 += vdq_a1 * vdf_1;
+    _mm256_store_pd((double*)(p + i_a1),vpi_1);
+    v4df vpj_1 = _mm256_load_pd((double*)(p + j_a1));
+    vpj_1 -= vdq_a1 * vdf_1;
+    _mm256_store_pd((double*)(p + j_a1),vpj_1);
+
+    v4df vpi_2 = _mm256_load_pd((double*)(p + i_a2));
+    vpi_2 += vdq_a2 * vdf_2;
+    _mm256_store_pd((double*)(p + i_a2),vpi_2);
+    v4df vpj_2 = _mm256_load_pd((double*)(p + j_a2));
+    vpj_2 -= vdq_a2 * vdf_2;
+    _mm256_store_pd((double*)(p + j_a2),vpj_2);
+
+    v4df vpi_3 = _mm256_load_pd((double*)(p + i_a3));
+    vpi_3 += vdq_a3 * vdf_3;
+    _mm256_store_pd((double*)(p + i_a3),vpi_3);
+    v4df vpj_3 = _mm256_load_pd((double*)(p + j_a3));
+    vpj_3 -= vdq_a3 * vdf_3;
+    _mm256_store_pd((double*)(p + j_a3),vpj_3);
+
+    v4df vpi_4 = _mm256_load_pd((double*)(p + i_a4));
+    vpi_4 += vdq_a4 * vdf_4;
+    _mm256_store_pd((double*)(p + i_a4),vpi_4);
+    v4df vpj_4 = _mm256_load_pd((double*)(p + j_a4));
+    vpj_4 -= vdq_a4 * vdf_4;
+    _mm256_store_pd((double*)(p + j_a4),vpj_4);
+    /*
     p[i_a1][X] += df_1 * dx_a1;
     p[i_a1][Y] += df_1 * dy_a1;
     p[i_a1][Z] += df_1 * dz_a1;
-/*
-    print256(vpi_1);
-    printf("%.10f %.10f %.10f %.10f\n",p[i_a1][X],p[i_a1][Y],p[i_a1][Z],0.0);
-    exit(1);//ここまでOK
-    */
-
-
-    v4df vpj_1 = _mm256_load_pd((double*)(p + j_a1));
-    vpj_1 -= vdq_a1 * vdf_1;
     p[j_a1][X] -= df_1 * dx_a1;
     p[j_a1][Y] -= df_1 * dy_a1;
     p[j_a1][Z] -= df_1 * dz_a1;
-    print256(vpj_1);
-    printf("%.10f %.10f %.10f %.10f\n",p[j_a1][X],p[j_a1][Y],p[j_a1][Z],0.0);
-    exit(1);//ここまでOK
 
     p[i_a2][X] += df_2 * dx_a2;
     p[i_a2][Y] += df_2 * dy_a2;
@@ -468,6 +491,7 @@ force_pair_intrin(void){
     p[j_a4][X] -= df_4 * dx_a4;
     p[j_a4][Y] -= df_4 * dy_a4;
     p[j_a4][Z] -= df_4 * dz_a4;
+    */
 
     i_a1 = i_b1;
     j_a1 = j_b1;

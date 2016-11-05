@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 //----------------------------------------------------------------------
 const double density = 1.0;
-//const double density = 0.5;
 const int N = 400000;
 const int MAX_PAIRS = 30 * N;
 double L = 50.0;
@@ -272,38 +271,50 @@ force_pair_intrin(void){
     v4df vqj_b1 = _mm256_load_pd((double*)(q + j_b1));
     vdq_b1 = vqj_b1 - vqi_b1;
 
+    v4df vr2_1x = vdq_a1*vdq_a1; 
+    v4df vr2_1y = _mm256_permute4x64_pd(vr2_1x, 201);
+    v4df vr2_1z = _mm256_permute4x64_pd(vr2_1x, 210);
+    v4df vr2_1 =  vr2_1x + vr2_1y + vr2_1z;
+
     v4df vqi_b2 = _mm256_load_pd((double*)(q + i_b2));
     v4df vqj_b2 = _mm256_load_pd((double*)(q + j_b2));
     vdq_b2 = vqj_b2 - vqi_b2;
+
+    v4df vr2_2x = vdq_a2*vdq_a2; 
+    v4df vr2_2y = _mm256_permute4x64_pd(vr2_2x, 201);
+    v4df vr2_2z = _mm256_permute4x64_pd(vr2_2x, 210);
+    v4df vr2_2 =  vr2_2x + vr2_2y + vr2_2z;
 
     v4df vqi_b3 = _mm256_load_pd((double*)(q + i_b3));
     v4df vqj_b3 = _mm256_load_pd((double*)(q + j_b3));
     vdq_b3 = vqj_b3 - vqi_b3;
 
-    v4df vqi_b4 = _mm256_load_pd((double*)(q + i_b4));
-    v4df vqj_b4 = _mm256_load_pd((double*)(q + j_b4));
-    vdq_b4 = vqj_b4 - vqi_b4;
-
-    v4df vr2_1x = vdq_a1*vdq_a1; 
-    v4df vr2_1y = _mm256_permute4x64_pd(vr2_1x, 201);
-    v4df vr2_1z = _mm256_permute4x64_pd(vr2_1x, 210);
-    v4df vr2_1 =  vr2_1x + vr2_1y + vr2_1z;
-    
-    v4df vr2_2x = vdq_a2*vdq_a2; 
-    v4df vr2_2y = _mm256_permute4x64_pd(vr2_2x, 201);
-    v4df vr2_2z = _mm256_permute4x64_pd(vr2_2x, 210);
-    v4df vr2_2 =  vr2_2x + vr2_2y + vr2_2z;
-    
     v4df vr2_3x = vdq_a3*vdq_a3; 
     v4df vr2_3y = _mm256_permute4x64_pd(vr2_3x, 201);
     v4df vr2_3z = _mm256_permute4x64_pd(vr2_3x, 210);
     v4df vr2_3 =  vr2_3x + vr2_3y + vr2_3z;
 
+    v4df vqi_b4 = _mm256_load_pd((double*)(q + i_b4));
+    v4df vqj_b4 = _mm256_load_pd((double*)(q + j_b4));
+    vdq_b4 = vqj_b4 - vqi_b4;
+
+    // 4.0
+    
     v4df vr2_4x = vdq_a4*vdq_a4; 
     v4df vr2_4y = _mm256_permute4x64_pd(vr2_4x, 201);
     v4df vr2_4z = _mm256_permute4x64_pd(vr2_4x, 210);
     v4df vr2_4 =  vr2_4x + vr2_4y + vr2_4z;
-    
+
+    // 3.5
+    v4df vpi_1 = _mm256_load_pd((double*)(p + i_a1));
+    v4df vpj_1 = _mm256_load_pd((double*)(p + j_a1));
+    v4df vpi_2 = _mm256_load_pd((double*)(p + i_a2));
+    v4df vpj_2 = _mm256_load_pd((double*)(p + j_a2));
+    v4df vpi_3 = _mm256_load_pd((double*)(p + i_a3));
+    v4df vpj_3 = _mm256_load_pd((double*)(p + j_a3));
+    v4df vpi_4 = _mm256_load_pd((double*)(p + i_a4));
+    v4df vpj_4 = _mm256_load_pd((double*)(p + j_a4));
+
     v4df vr2_13 = _mm256_unpacklo_pd(vr2_1, vr2_3);
     v4df vr2_24 = _mm256_unpacklo_pd(vr2_2, vr2_4);
     v4df vr2 = _mm256_shuffle_pd(vr2_13, vr2_24, 12);
@@ -318,31 +329,23 @@ force_pair_intrin(void){
     v4df vdf_3 = _mm256_permute4x64_pd(vdf, 170);
     v4df vdf_4 = _mm256_permute4x64_pd(vdf, 255);
 
-    v4df vpi_1 = _mm256_load_pd((double*)(p + i_a1));
     vpi_1 += vdq_a1 * vdf_1;
     _mm256_store_pd((double*)(p + i_a1),vpi_1);
-    v4df vpj_1 = _mm256_load_pd((double*)(p + j_a1));
     vpj_1 -= vdq_a1 * vdf_1;
     _mm256_store_pd((double*)(p + j_a1),vpj_1);
 
-    v4df vpi_2 = _mm256_load_pd((double*)(p + i_a2));
     vpi_2 += vdq_a2 * vdf_2;
     _mm256_store_pd((double*)(p + i_a2),vpi_2);
-    v4df vpj_2 = _mm256_load_pd((double*)(p + j_a2));
     vpj_2 -= vdq_a2 * vdf_2;
     _mm256_store_pd((double*)(p + j_a2),vpj_2);
 
-    v4df vpi_3 = _mm256_load_pd((double*)(p + i_a3));
     vpi_3 += vdq_a3 * vdf_3;
     _mm256_store_pd((double*)(p + i_a3),vpi_3);
-    v4df vpj_3 = _mm256_load_pd((double*)(p + j_a3));
     vpj_3 -= vdq_a3 * vdf_3;
     _mm256_store_pd((double*)(p + j_a3),vpj_3);
 
-    v4df vpi_4 = _mm256_load_pd((double*)(p + i_a4));
     vpi_4 += vdq_a4 * vdf_4;
     _mm256_store_pd((double*)(p + i_a4),vpi_4);
-    v4df vpj_4 = _mm256_load_pd((double*)(p + j_a4));
     vpj_4 -= vdq_a4 * vdf_4;
     _mm256_store_pd((double*)(p + j_a4),vpj_4);
 

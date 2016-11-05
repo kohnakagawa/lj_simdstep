@@ -212,6 +212,10 @@ force_pair_swp(void){
 //----------------------------------------------------------------------
 void
 force_pair_intrin(void){
+  const v4df vzero = _mm256_set_pd(0, 0, 0, 0);
+  const v4df vcl2 = _mm256_set_pd(CL2, CL2, CL2, CL2);
+  const v4df vc24 = _mm256_set_pd(24 * dt, 24 * dt, 24 * dt, 24 * dt);
+  const v4df vc48 = _mm256_set_pd(48 * dt, 48 * dt, 48 * dt, 48 * dt);
   int k = 0;
   int i_a1 = i_particles[k];
   int j_a1 = j_particles[k];
@@ -383,21 +387,66 @@ force_pair_intrin(void){
     const double r6_2 = r2_2 * r2_2 * r2_2;
     const double r6_3 = r2_3 * r2_3 * r2_3;
     const double r6_4 = r2_4 * r2_4 * r2_4;
+    v4df vr6 = vr2 * vr2 * vr2;
+    /*
+    print256(vr6);
+    printf("%.10f %.10f %.10f %.10f\n",r6_1,r6_2,r6_3,r6_4);
+    exit(1);//ここまでOK
+    */
+    
     df_1 = ((24.0 * r6_1 - 48.0) / (r6_1 * r6_1 * r2_1)) * dt;
     df_2 = ((24.0 * r6_2 - 48.0) / (r6_2 * r6_2 * r2_2)) * dt;
     df_3 = ((24.0 * r6_3 - 48.0) / (r6_3 * r6_3 * r2_3)) * dt;
     df_4 = ((24.0 * r6_4 - 48.0) / (r6_4 * r6_4 * r2_4)) * dt;
 
+    v4df vdf = (vc24 * vr6 - vc48) / (vr6 * vr6 * vr2);
+
     if (r2_1 > CL2) df_1=0.0;
     if (r2_2 > CL2) df_2=0.0;
     if (r2_3 > CL2) df_3=0.0;
     if (r2_4 > CL2) df_4=0.0;
+
+    v4df mask = vcl2 - vr2;
+    vdf = _mm256_blendv_pd(vdf, vzero, mask);
+
+/*
+    print256(vdf);
+    printf("%.10f %.10f %.10f %.10f\n",df_1,df_2,df_3,df_4);
+    */
+
+    v4df vdf_1 = _mm256_permute4x64_pd(vdf, 0);
+    v4df vdf_2 = _mm256_permute4x64_pd(vdf, 85);
+    v4df vdf_3 = _mm256_permute4x64_pd(vdf, 170);
+    v4df vdf_4 = _mm256_permute4x64_pd(vdf, 255);
+
+/*
+    print256(vdf_1);
+    print256(vdf_2);
+    print256(vdf_3);
+    print256(vdf_4);
+    exit(1); //ここまでOK
+    */
+
+    v4df vpi_1 = _mm256_load_pd((double*)(p + i_a1));
+    vpi_1 += vdq_a1 * vdf_1;
     p[i_a1][X] += df_1 * dx_a1;
     p[i_a1][Y] += df_1 * dy_a1;
     p[i_a1][Z] += df_1 * dz_a1;
+/*
+    print256(vpi_1);
+    printf("%.10f %.10f %.10f %.10f\n",p[i_a1][X],p[i_a1][Y],p[i_a1][Z],0.0);
+    exit(1);//ここまでOK
+    */
+
+
+    v4df vpj_1 = _mm256_load_pd((double*)(p + j_a1));
+    vpj_1 -= vdq_a1 * vdf_1;
     p[j_a1][X] -= df_1 * dx_a1;
     p[j_a1][Y] -= df_1 * dy_a1;
     p[j_a1][Z] -= df_1 * dz_a1;
+    print256(vpj_1);
+    printf("%.10f %.10f %.10f %.10f\n",p[j_a1][X],p[j_a1][Y],p[j_a1][Z],0.0);
+    exit(1);//ここまでOK
 
     p[i_a2][X] += df_2 * dx_a2;
     p[i_a2][Y] += df_2 * dy_a2;

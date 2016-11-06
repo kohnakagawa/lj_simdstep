@@ -468,6 +468,10 @@ force_sorted_swp(void) {
 void
 force_sorted_swp_intrin(void) {
   const int pn = particle_number;
+  const v4df vzero = _mm256_set_pd(0, 0, 0, 0);
+  const v4df vcl2 = _mm256_set_pd(CL2, CL2, CL2, CL2);
+  const v4df vc24 = _mm256_set_pd(24 * dt, 24 * dt, 24 * dt, 24 * dt);
+  const v4df vc48 = _mm256_set_pd(48 * dt, 48 * dt, 48 * dt, 48 * dt);
   for (int i = 0; i < pn; i++) {
     const double qix = q[i][X];
     const double qiy = q[i][Y];
@@ -649,8 +653,6 @@ force_sorted_swp_intrin(void) {
       exit(1); //OK
       */
 
-
-
       const int j_4 = ja_4;
       ja_4 = sorted_list[kp + k + 7];
       dxa_4 = q[ja_4][X] - qix;
@@ -665,6 +667,19 @@ force_sorted_swp_intrin(void) {
       const double r6_4 = r2_4 * r2_4 * r2_4;
       df_4 = ((24.0 * r6_4 - 48.0) / (r6_4 * r6_4 * r2_4)) * dt;
       if (r2_4 > CL2) df_4 = 0.0;
+
+      v4df vr2_13 = _mm256_unpacklo_pd(vr2_1, vr2_3);
+      v4df vr2_24 = _mm256_unpacklo_pd(vr2_2, vr2_4);
+      v4df vr2 = _mm256_shuffle_pd(vr2_13, vr2_24, 12);
+      v4df vr6 = vr2 * vr2 * vr2;
+      v4df vdf = (vc24 * vr6 - vc48) / (vr6 * vr6 * vr2);
+      v4df mask = vcl2 - vr2;
+      vdf = _mm256_blendv_pd(vdf, vzero, mask);      
+      print256(vdf);
+      p4(df);
+      exit(1);
+
+
       jb_4 = j_4;
       dxb_4 = dx_4;
       dyb_4 = dy_4;

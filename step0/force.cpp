@@ -404,6 +404,9 @@ main(void) {
 #ifdef PAIR
   measure(&force_pair, "pair");
   print_result();
+#elif SORTED
+  measure(&force_sorted, "sorted");
+  print_result();
 #elif S_INTRIN
   measure(&force_sorted_intrin, "sorted_intrin");
   print_result();

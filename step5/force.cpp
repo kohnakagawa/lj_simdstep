@@ -597,15 +597,13 @@ force_sorted_swp_intrin(void) {
       //pv(pf,);
 
       v4df vpjb_1 = _mm256_load_pd((double*)(p + jb_1));
+      vpjb_1 -= vdf_1 * vdqb_1;
+      _mm256_store_pd((double*)(p + jb_1), vpjb_1);
       /*
       p[jb_1][X] -= df_1 * dxb_1;
       p[jb_1][Y] -= df_1 * dyb_1;
       p[jb_1][Z] -= df_1 * dzb_1;
       */
-      vpjb_1 -= vdf_1 * vdqb_1;
-      _mm256_store_pd((double*)(p + jb_1), vpjb_1);
-      //print256(vpjb_1);
-      //printf("%.10f %.10f %.10f %.10f\n",p[jb_1][X],p[jb_1][Y],p[jb_1][Z],0.0);
 
       dxa_2 = q[ja_2][X] - qix;
       dya_2 = q[ja_2][Y] - qiy;
@@ -617,13 +615,15 @@ force_sorted_swp_intrin(void) {
       vqj_2 = _mm256_load_pd((double*)(q + ja_2));
       vdqa_2 = vqj_2 - vqi;
       vpf += vdf_2 * vdqb_2;
-      //print256(vpf);
-      //pv(pf,);
 
-
+      v4df vpjb_2 = _mm256_load_pd((double*)(p + jb_2));
+      vpjb_2 -= vdf_2 * vdqb_2;
+      _mm256_store_pd((double*)(p + jb_2), vpjb_2);
+/*
       p[jb_2][X] -= df_2 * dxb_2;
       p[jb_2][Y] -= df_2 * dyb_2;
       p[jb_2][Z] -= df_2 * dzb_2;
+      */
 
       dxa_3 = q[ja_3][X] - qix;
       dya_3 = q[ja_3][Y] - qiy;
@@ -635,12 +635,15 @@ force_sorted_swp_intrin(void) {
       vqj_3 = _mm256_load_pd((double*)(q + ja_3));
       vdqa_3 = vqj_3 - vqi;
       vpf += vdf_3 * vdqb_3;
-      //print256(vpf);
-      //pv(pf,);
 
+      v4df vpjb_3 = _mm256_load_pd((double*)(p + jb_3));
+      vpjb_3 -= vdf_3 * vdqb_3;
+      _mm256_store_pd((double*)(p + jb_3), vpjb_3);
+      /*
       p[jb_3][X] -= df_3 * dxb_3;
       p[jb_3][Y] -= df_3 * dyb_3;
       p[jb_3][Z] -= df_3 * dzb_3;
+      */
 
       dxa_4 = q[ja_4][X] - qix;
       dya_4 = q[ja_4][Y] - qiy;
@@ -655,9 +658,14 @@ force_sorted_swp_intrin(void) {
       //print256(vpf);
       //pv(pf,);
 
+      v4df vpjb_4 = _mm256_load_pd((double*)(p + jb_4));
+      vpjb_4 -= vdf_4 * vdqb_4;
+      _mm256_store_pd((double*)(p + jb_4), vpjb_4);
+/*
       p[jb_4][X] -= df_4 * dxb_4;
       p[jb_4][Y] -= df_4 * dyb_4;
       p[jb_4][Z] -= df_4 * dzb_4;
+      */
 
       const double r6_1 = r2_1 * r2_1 * r2_1;
       df_1 = ((24.0 * r6_1 - 48.0) / (r6_1 * r6_1 * r2_1)) * dt;
@@ -863,7 +871,8 @@ force_sorted_intrin(void) {
 void
 measure(void(*pfunc)(), const char *name) {
   double st = myclock();
-  const int LOOP = 100;
+  //const int LOOP = 100;
+  const int LOOP = 1;
   for (int i = 0; i < LOOP; i++) {
     pfunc();
   }

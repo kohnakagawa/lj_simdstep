@@ -542,6 +542,7 @@ force_sorted_swp_intrin(void) {
       v4df vr2t_1 = _mm256_permute4x64_pd(vr2s_1, 201);
       v4df vr2u_1 = _mm256_permute4x64_pd(vr2s_1, 210);
       v4df vr2_1 = vr2s_1 + vr2t_1 + vr2u_1;
+
  
       const int j_1 = ja_1;
       const int j_2 = ja_2;
@@ -561,9 +562,7 @@ force_sorted_swp_intrin(void) {
       p[jb_1][X] -= df_1 * dxb_1;
       p[jb_1][Y] -= df_1 * dyb_1;
       p[jb_1][Z] -= df_1 * dzb_1;
-      const double r6_1 = r2_1 * r2_1 * r2_1;
-      df_1 = ((24.0 * r6_1 - 48.0) / (r6_1 * r6_1 * r2_1)) * dt;
-      if (r2_1 > CL2) df_1 = 0.0;
+
 
       const double dx_2 = dxa_2;
       const double dy_2 = dya_2;
@@ -576,7 +575,6 @@ force_sorted_swp_intrin(void) {
       v4df vr2u_2 = _mm256_permute4x64_pd(vr2s_2, 210);
       v4df vr2_2 = vr2s_2 + vr2t_2 + vr2u_2;
 
-
       dxa_2 = q[ja_2][X] - qix;
       dya_2 = q[ja_2][Y] - qiy;
       dza_2 = q[ja_2][Z] - qiz;
@@ -586,9 +584,6 @@ force_sorted_swp_intrin(void) {
       p[jb_2][X] -= df_2 * dxb_2;
       p[jb_2][Y] -= df_2 * dyb_2;
       p[jb_2][Z] -= df_2 * dzb_2;
-      const double r6_2 = r2_2 * r2_2 * r2_2;
-      df_2 = ((24.0 * r6_2 - 48.0) / (r6_2 * r6_2 * r2_2)) * dt;
-      if (r2_2 > CL2) df_2 = 0.0;
 
       const double dx_3 = dxa_3;
       const double dy_3 = dya_3;
@@ -614,9 +609,6 @@ force_sorted_swp_intrin(void) {
       p[jb_3][X] -= df_3 * dxb_3;
       p[jb_3][Y] -= df_3 * dyb_3;
       p[jb_3][Z] -= df_3 * dzb_3;
-      const double r6_3 = r2_3 * r2_3 * r2_3;
-      df_3 = ((24.0 * r6_3 - 48.0) / (r6_3 * r6_3 * r2_3)) * dt;
-      if (r2_3 > CL2) df_3 = 0.0;
 
       const double dx_4 = dxa_4;
       const double dy_4 = dya_4;
@@ -643,6 +635,19 @@ force_sorted_swp_intrin(void) {
       p[jb_4][X] -= df_4 * dxb_4;
       p[jb_4][Y] -= df_4 * dyb_4;
       p[jb_4][Z] -= df_4 * dzb_4;
+
+      const double r6_1 = r2_1 * r2_1 * r2_1;
+      df_1 = ((24.0 * r6_1 - 48.0) / (r6_1 * r6_1 * r2_1)) * dt;
+      if (r2_1 > CL2) df_1 = 0.0;
+
+      const double r6_2 = r2_2 * r2_2 * r2_2;
+      df_2 = ((24.0 * r6_2 - 48.0) / (r6_2 * r6_2 * r2_2)) * dt;
+      if (r2_2 > CL2) df_2 = 0.0;
+
+      const double r6_3 = r2_3 * r2_3 * r2_3;
+      df_3 = ((24.0 * r6_3 - 48.0) / (r6_3 * r6_3 * r2_3)) * dt;
+      if (r2_3 > CL2) df_3 = 0.0;
+
       const double r6_4 = r2_4 * r2_4 * r2_4;
       df_4 = ((24.0 * r6_4 - 48.0) / (r6_4 * r6_4 * r2_4)) * dt;
       if (r2_4 > CL2) df_4 = 0.0;

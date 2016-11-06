@@ -713,9 +713,15 @@ force_sorted_swp_intrin(void) {
       vdqb_3 = vdq_3;
       vdqb_4 = vdq_4;
     }
+
+    v4df vpi= _mm256_load_pd((double*)(p + i));
+    vpi += vpf;
+    _mm256_store_pd((double*)(p + i), vpi);
+    /*
     p[i][X] += pfx;
     p[i][Y] += pfy;
     p[i][Z] += pfz;
+    */
 
     p[jb_1][X] -= df_1 * dxb_1;
     p[jb_1][Y] -= df_1 * dyb_1;

@@ -477,11 +477,6 @@ force_sorted_swp_intrin(void) {
     const double qiy = q[i][Y];
     const double qiz = q[i][Z];
     const v4df vqi= _mm256_load_pd((double*)(q + i));
-    /*
-    print256(vqi);
-    printf("%.10f %.10f %.10f\n",qix,qiy,qiz);
-    exit(1);
-    */
     double pfx = 0;
     double pfy = 0;
     double pfz = 0;
@@ -495,25 +490,25 @@ force_sorted_swp_intrin(void) {
     double dxa_1 = q[ja_1][X] - qix;
     double dya_1 = q[ja_1][Y] - qiy;
     double dza_1 = q[ja_1][Z] - qiz;
-    const v4df vqj_1= _mm256_load_pd((double*)(q + ja_1));
+    v4df vqj_1= _mm256_load_pd((double*)(q + ja_1));
     v4df vdqa_1 = vqj_1 - vqi;
 
     double dxa_2 = q[ja_2][X] - qix;
     double dya_2 = q[ja_2][Y] - qiy;
     double dza_2 = q[ja_2][Z] - qiz;
-    const v4df vqj_2= _mm256_load_pd((double*)(q + ja_2));
+    v4df vqj_2= _mm256_load_pd((double*)(q + ja_2));
     v4df vdqa_2 = vqj_2 - vqi;
 
     double dxa_3 = q[ja_3][X] - qix;
     double dya_3 = q[ja_3][Y] - qiy;
     double dza_3 = q[ja_3][Z] - qiz;
-    const v4df vqj_3= _mm256_load_pd((double*)(q + ja_3));
+    v4df vqj_3= _mm256_load_pd((double*)(q + ja_3));
     v4df vdqa_3 = vqj_3 - vqi;
 
     double dxa_4 = q[ja_4][X] - qix;
     double dya_4 = q[ja_4][Y] - qiy;
     double dza_4 = q[ja_4][Z] - qiz;
-    const v4df vqj_4= _mm256_load_pd((double*)(q + ja_4));
+    v4df vqj_4= _mm256_load_pd((double*)(q + ja_4));
     v4df vdqa_4 = vqj_4 - vqi;
 
     double df_1 = 0.0 , df_2 = 0.0, df_3 = 0.0, df_4 = 0.0;
@@ -532,26 +527,61 @@ force_sorted_swp_intrin(void) {
     int jb_1 = 0, jb_2 = 0, jb_3 = 0, jb_4 = 0;
     const int np = number_of_partners[i];
     for (int k = 0; k < (np/4)*4; k+=4) {
-      const double dx_1 = dxa_1;
-      const double dy_1 = dya_1;
-      const double dz_1 = dza_1;
-
-      double r2_1 = (dx_1 * dx_1 + dy_1 * dy_1 + dz_1 * dz_1);
-      v4df vdq_1 = vdqa_1;
-      v4df vr2s_1 = vdq_1*vdq_1;
-      v4df vr2t_1 = _mm256_permute4x64_pd(vr2s_1, 201);
-      v4df vr2u_1 = _mm256_permute4x64_pd(vr2s_1, 210);
-      v4df vr2_1 = vr2s_1 + vr2t_1 + vr2u_1;
-
- 
       const int j_1 = ja_1;
       const int j_2 = ja_2;
       const int j_3 = ja_3;
       const int j_4 = ja_4;
+
+      const double dx_1 = dxa_1;
+      const double dy_1 = dya_1;
+      const double dz_1 = dza_1;
+      const double dx_2 = dxa_2;
+      const double dy_2 = dya_2;
+      const double dz_2 = dza_2;
+      const double dx_3 = dxa_3;
+      const double dy_3 = dya_3;
+      const double dz_3 = dza_3;
+      const double dx_4 = dxa_4;
+      const double dy_4 = dya_4;
+      const double dz_4 = dza_4;
+      v4df vdq_1 = vdqa_1;
+      v4df vdq_2 = vdqa_2;
+      v4df vdq_3 = vdqa_3;
+      v4df vdq_4 = vdqa_4;
+
       ja_1 = sorted_list[kp + k + 4];
       ja_2 = sorted_list[kp + k + 5];
       ja_3 = sorted_list[kp + k + 6];
       ja_4 = sorted_list[kp + k + 7];
+
+      double r2_1 = (dx_1 * dx_1 + dy_1 * dy_1 + dz_1 * dz_1);
+      v4df vr2s_1 = vdq_1*vdq_1;
+      v4df vr2t_1 = _mm256_permute4x64_pd(vr2s_1, 201);
+      v4df vr2u_1 = _mm256_permute4x64_pd(vr2s_1, 210);
+      v4df vr2_1 = vr2s_1 + vr2t_1 + vr2u_1;
+ 
+      double r2_2 = (dx_2 * dx_2 + dy_2 * dy_2 + dz_2 * dz_2);
+      v4df vr2s_2 = vdq_2*vdq_2;
+      v4df vr2t_2 = _mm256_permute4x64_pd(vr2s_2, 201);
+      v4df vr2u_2 = _mm256_permute4x64_pd(vr2s_2, 210);
+      v4df vr2_2 = vr2s_2 + vr2t_2 + vr2u_2;
+
+      double r2_3 = (dx_3 * dx_3 + dy_3 * dy_3 + dz_3 * dz_3);
+      v4df vr2s_3 = vdq_3*vdq_3;
+      v4df vr2t_3 = _mm256_permute4x64_pd(vr2s_3, 201);
+      v4df vr2u_3 = _mm256_permute4x64_pd(vr2s_3, 210);
+      v4df vr2_3 = vr2s_3 + vr2t_3 + vr2u_3;
+
+      double r2_4 = (dx_4 * dx_4 + dy_4 * dy_4 + dz_4 * dz_4);
+      v4df vr2s_4 = vdq_4*vdq_4;
+      v4df vr2t_4 = _mm256_permute4x64_pd(vr2s_4, 201);
+      v4df vr2u_4 = _mm256_permute4x64_pd(vr2s_4, 210);
+      v4df vr2_4 = vr2s_4 + vr2t_4 + vr2u_4;
+
+      v4df vdf_1 = _mm256_permute4x64_pd(vdf, 0);
+      v4df vdf_2 = _mm256_permute4x64_pd(vdf, 85);
+      v4df vdf_3 = _mm256_permute4x64_pd(vdf, 170);
+      v4df vdf_4 = _mm256_permute4x64_pd(vdf, 255);
 
       dxa_1 = q[ja_1][X] - qix;
       dya_1 = q[ja_1][Y] - qiy;
@@ -559,21 +589,23 @@ force_sorted_swp_intrin(void) {
       pfx += df_1 * dxb_1;
       pfy += df_1 * dyb_1;
       pfz += df_1 * dzb_1;
+
+      vqj_1 = _mm256_load_pd((double*)(q + ja_1));
+      vdqa_1 = vqj_1 - vqi;
+      vpf += vdf_1 * vdqb_1;
+      //print256(vpf);
+      //pv(pf,);
+
+      v4df vpjb_1 = _mm256_load_pd((double*)(p + jb_1));
+      /*
       p[jb_1][X] -= df_1 * dxb_1;
       p[jb_1][Y] -= df_1 * dyb_1;
       p[jb_1][Z] -= df_1 * dzb_1;
-
-
-      const double dx_2 = dxa_2;
-      const double dy_2 = dya_2;
-      const double dz_2 = dza_2;
-      double r2_2 = (dx_2 * dx_2 + dy_2 * dy_2 + dz_2 * dz_2);
-
-      v4df vdq_2 = vdqa_2;
-      v4df vr2s_2 = vdq_2*vdq_2;
-      v4df vr2t_2 = _mm256_permute4x64_pd(vr2s_2, 201);
-      v4df vr2u_2 = _mm256_permute4x64_pd(vr2s_2, 210);
-      v4df vr2_2 = vr2s_2 + vr2t_2 + vr2u_2;
+      */
+      vpjb_1 -= vdf_1 * vdqb_1;
+      _mm256_store_pd((double*)(p + jb_1), vpjb_1);
+      //print256(vpjb_1);
+      //printf("%.10f %.10f %.10f %.10f\n",p[jb_1][X],p[jb_1][Y],p[jb_1][Z],0.0);
 
       dxa_2 = q[ja_2][X] - qix;
       dya_2 = q[ja_2][Y] - qiy;
@@ -581,50 +613,34 @@ force_sorted_swp_intrin(void) {
       pfx += df_2 * dxb_2;
       pfy += df_2 * dyb_2;
       pfz += df_2 * dzb_2;
+
+      vqj_2 = _mm256_load_pd((double*)(q + ja_2));
+      vdqa_2 = vqj_2 - vqi;
+      vpf += vdf_2 * vdqb_2;
+      //print256(vpf);
+      //pv(pf,);
+
+
       p[jb_2][X] -= df_2 * dxb_2;
       p[jb_2][Y] -= df_2 * dyb_2;
       p[jb_2][Z] -= df_2 * dzb_2;
 
-      const double dx_3 = dxa_3;
-      const double dy_3 = dya_3;
-      const double dz_3 = dza_3;
-      double r2_3 = (dx_3 * dx_3 + dy_3 * dy_3 + dz_3 * dz_3);
-
-      v4df vdq_3 = vdqa_3;
-      v4df vr2s_3 = vdq_3*vdq_3;
-      v4df vr2t_3 = _mm256_permute4x64_pd(vr2s_3, 201);
-      v4df vr2u_3 = _mm256_permute4x64_pd(vr2s_3, 210);
-      v4df vr2_3 = vr2s_3 + vr2t_3 + vr2u_3;
-      /*
-      print256(vr2_3);
-      printf("%.10f\n",r2_3);
-      exit(1); //OK
-      */
       dxa_3 = q[ja_3][X] - qix;
       dya_3 = q[ja_3][Y] - qiy;
       dza_3 = q[ja_3][Z] - qiz;
       pfx += df_3 * dxb_3;
       pfy += df_3 * dyb_3;
       pfz += df_3 * dzb_3;
+
+      vqj_3 = _mm256_load_pd((double*)(q + ja_3));
+      vdqa_3 = vqj_3 - vqi;
+      vpf += vdf_3 * vdqb_3;
+      //print256(vpf);
+      //pv(pf,);
+
       p[jb_3][X] -= df_3 * dxb_3;
       p[jb_3][Y] -= df_3 * dyb_3;
       p[jb_3][Z] -= df_3 * dzb_3;
-
-      const double dx_4 = dxa_4;
-      const double dy_4 = dya_4;
-      const double dz_4 = dza_4;
-      double r2_4 = (dx_4 * dx_4 + dy_4 * dy_4 + dz_4 * dz_4);
-
-      v4df vdq_4 = vdqa_4;
-      v4df vr2s_4 = vdq_4*vdq_4;
-      v4df vr2t_4 = _mm256_permute4x64_pd(vr2s_4, 201);
-      v4df vr2u_4 = _mm256_permute4x64_pd(vr2s_4, 210);
-      v4df vr2_4 = vr2s_4 + vr2t_4 + vr2u_4;
-      /*
-      print256(vr2_4);
-      printf("%.10f\n",r2_4);
-      exit(1); //OK
-      */
 
       dxa_4 = q[ja_4][X] - qix;
       dya_4 = q[ja_4][Y] - qiy;
@@ -632,6 +648,13 @@ force_sorted_swp_intrin(void) {
       pfx += df_4 * dxb_4;
       pfy += df_4 * dyb_4;
       pfz += df_4 * dzb_4;
+
+      vqj_4 = _mm256_load_pd((double*)(q + ja_4));
+      vdqa_4 = vqj_4 - vqi;
+      vpf += vdf_4 * vdqb_4;
+      //print256(vpf);
+      //pv(pf,);
+
       p[jb_4][X] -= df_4 * dxb_4;
       p[jb_4][Y] -= df_4 * dyb_4;
       p[jb_4][Z] -= df_4 * dzb_4;
@@ -656,14 +679,9 @@ force_sorted_swp_intrin(void) {
       v4df vr2_24 = _mm256_unpacklo_pd(vr2_2, vr2_4);
       v4df vr2 = _mm256_shuffle_pd(vr2_13, vr2_24, 12);
       v4df vr6 = vr2 * vr2 * vr2;
-      v4df vdf = (vc24 * vr6 - vc48) / (vr6 * vr6 * vr2);
+      vdf = (vc24 * vr6 - vc48) / (vr6 * vr6 * vr2);
       v4df mask = vcl2 - vr2;
       vdf = _mm256_blendv_pd(vdf, vzero, mask);      
-      /*
-      print256(vdf);
-      p4(df);
-      exit(1);
-      */
 
       jb_1 = j_1;
       jb_2 = j_2;
@@ -682,6 +700,10 @@ force_sorted_swp_intrin(void) {
       dxb_4 = dx_4;
       dyb_4 = dy_4;
       dzb_4 = dz_4;
+      vdqb_1 = vdq_1;
+      vdqb_2 = vdq_2;
+      vdqb_3 = vdq_3;
+      vdqb_4 = vdq_4;
     }
     p[i][X] += pfx;
     p[i][Y] += pfy;

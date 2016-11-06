@@ -463,6 +463,8 @@ force_sorted_swp(void) {
   }
 }
 //----------------------------------------------------------------------
+#define pv(a,b) printf("%.10f %.10f %.10f %.10f\n",a##x##b,a##y##b,a##z##b,0.0);
+//----------------------------------------------------------------------
 void
 force_sorted_swp_intrin(void) {
   const int pn = particle_number;
@@ -471,10 +473,16 @@ force_sorted_swp_intrin(void) {
     const double qiy = q[i][Y];
     const double qiz = q[i][Z];
     const v4df vqi= _mm256_load_pd((double*)(q + i));
-
+    /*
+    print256(vqi);
+    printf("%.10f %.10f %.10f\n",qix,qiy,qiz);
+    exit(1);
+    */
     double pfx = 0;
     double pfy = 0;
     double pfz = 0;
+    v4df vpf = _mm256_set_pd(0.0,0.0,0.0,0.0);
+
     const int kp = pointer[i];
     int ja_1 = sorted_list[kp];
     int ja_2 = sorted_list[kp + 1];
@@ -483,28 +491,59 @@ force_sorted_swp_intrin(void) {
     double dxa_1 = q[ja_1][X] - qix;
     double dya_1 = q[ja_1][Y] - qiy;
     double dza_1 = q[ja_1][Z] - qiz;
+    const v4df vqj_1= _mm256_load_pd((double*)(q + ja_1));
+    v4df vdqa_1 = vqj_1 - vqi;
+
     double dxa_2 = q[ja_2][X] - qix;
     double dya_2 = q[ja_2][Y] - qiy;
     double dza_2 = q[ja_2][Z] - qiz;
+    const v4df vqj_2= _mm256_load_pd((double*)(q + ja_2));
+    v4df vdqa_2 = vqj_2 - vqi;
+
     double dxa_3 = q[ja_3][X] - qix;
     double dya_3 = q[ja_3][Y] - qiy;
     double dza_3 = q[ja_3][Z] - qiz;
+    const v4df vqj_3= _mm256_load_pd((double*)(q + ja_3));
+    v4df vdqa_3 = vqj_3 - vqi;
+
     double dxa_4 = q[ja_4][X] - qix;
     double dya_4 = q[ja_4][Y] - qiy;
     double dza_4 = q[ja_4][Z] - qiz;
+    const v4df vqj_4= _mm256_load_pd((double*)(q + ja_4));
+    v4df vdqa_4 = vqj_4 - vqi;
 
     double df_1 = 0.0 , df_2 = 0.0, df_3 = 0.0, df_4 = 0.0;
+    v4df vdf = _mm256_set_pd(0.0,0.0,0.0,0.0);
+
     double dxb_1 = 0.0, dyb_1 = 0.0, dzb_1 = 0.0;
     double dxb_2 = 0.0, dyb_2 = 0.0, dzb_2 = 0.0;
     double dxb_3 = 0.0, dyb_3 = 0.0, dzb_3 = 0.0;
     double dxb_4 = 0.0, dyb_4 = 0.0, dzb_4 = 0.0;
+
+    v4df vdqb_1 = _mm256_set_pd(0.0,0.0,0.0,0.0);
+    v4df vdqb_2 = _mm256_set_pd(0.0,0.0,0.0,0.0);
+    v4df vdqb_3 = _mm256_set_pd(0.0,0.0,0.0,0.0);
+    v4df vdqb_4 = _mm256_set_pd(0.0,0.0,0.0,0.0);
+
     int jb_1 = 0, jb_2 = 0, jb_3 = 0, jb_4 = 0;
     const int np = number_of_partners[i];
     for (int k = 0; k < (np/4)*4; k+=4) {
       const double dx_1 = dxa_1;
       const double dy_1 = dya_1;
       const double dz_1 = dza_1;
+
       double r2_1 = (dx_1 * dx_1 + dy_1 * dy_1 + dz_1 * dz_1);
+      v4df vdq_1 = vdqa_1;
+      v4df vr2s_1 = vdq_1*vdq_1;
+      v4df vr2t_1 = _mm256_permute4x64_pd(vr2s_1, 201);
+      v4df vr2u_1 = _mm256_permute4x64_pd(vr2s_1, 210);
+      v4df vr2_1 = vr2s_1 + vr2t_1 + vr2u_1;
+      /*
+      print256(vr2_1);
+      printf("%.10f\n",r2_1);
+      exit(1); //OK
+      */
+
       const int j_1 = ja_1;
       ja_1 = sorted_list[kp + k + 4];
       dxa_1 = q[ja_1][X] - qix;
@@ -528,6 +567,19 @@ force_sorted_swp_intrin(void) {
       const double dy_2 = dya_2;
       const double dz_2 = dza_2;
       double r2_2 = (dx_2 * dx_2 + dy_2 * dy_2 + dz_2 * dz_2);
+
+      v4df vdq_2 = vdqa_2;
+      v4df vr2s_2 = vdq_2*vdq_2;
+      v4df vr2t_2 = _mm256_permute4x64_pd(vr2s_2, 201);
+      v4df vr2u_2 = _mm256_permute4x64_pd(vr2s_2, 210);
+      v4df vr2_2 = vr2s_2 + vr2t_2 + vr2u_2;
+      /*
+      print256(vr2_2);
+      printf("%.10f\n",r2_2);
+      exit(1); //OK
+      */
+
+
       const int j_2 = ja_2;
       ja_2 = sorted_list[kp + k + 5];
       dxa_2 = q[ja_2][X] - qix;
@@ -551,6 +603,17 @@ force_sorted_swp_intrin(void) {
       const double dy_3 = dya_3;
       const double dz_3 = dza_3;
       double r2_3 = (dx_3 * dx_3 + dy_3 * dy_3 + dz_3 * dz_3);
+
+      v4df vdq_3 = vdqa_3;
+      v4df vr2s_3 = vdq_3*vdq_3;
+      v4df vr2t_3 = _mm256_permute4x64_pd(vr2s_3, 201);
+      v4df vr2u_3 = _mm256_permute4x64_pd(vr2s_3, 210);
+      v4df vr2_3 = vr2s_3 + vr2t_3 + vr2u_3;
+      /*
+      print256(vr2_3);
+      printf("%.10f\n",r2_3);
+      exit(1); //OK
+      */
       const int j_3 = ja_3;
       ja_3 = sorted_list[kp + k + 6];
       dxa_3 = q[ja_3][X] - qix;
@@ -574,6 +637,20 @@ force_sorted_swp_intrin(void) {
       const double dy_4 = dya_4;
       const double dz_4 = dza_4;
       double r2_4 = (dx_4 * dx_4 + dy_4 * dy_4 + dz_4 * dz_4);
+
+      v4df vdq_4 = vdqa_4;
+      v4df vr2s_4 = vdq_4*vdq_4;
+      v4df vr2t_4 = _mm256_permute4x64_pd(vr2s_4, 201);
+      v4df vr2u_4 = _mm256_permute4x64_pd(vr2s_4, 210);
+      v4df vr2_4 = vr2s_4 + vr2t_4 + vr2u_4;
+      /*
+      print256(vr2_4);
+      printf("%.10f\n",r2_4);
+      exit(1); //OK
+      */
+
+
+
       const int j_4 = ja_4;
       ja_4 = sorted_list[kp + k + 7];
       dxa_4 = q[ja_4][X] - qix;

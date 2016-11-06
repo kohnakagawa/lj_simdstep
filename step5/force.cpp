@@ -562,10 +562,6 @@ force_sorted_swp_intrin(void) {
       const double r6_1 = r2_1 * r2_1 * r2_1;
       df_1 = ((24.0 * r6_1 - 48.0) / (r6_1 * r6_1 * r2_1)) * dt;
       if (r2_1 > CL2) df_1 = 0.0;
-      jb_1 = j_1;
-      dxb_1 = dx_1;
-      dyb_1 = dy_1;
-      dzb_1 = dz_1;
 
       const double dx_2 = dxa_2;
       const double dy_2 = dya_2;
@@ -598,10 +594,6 @@ force_sorted_swp_intrin(void) {
       const double r6_2 = r2_2 * r2_2 * r2_2;
       df_2 = ((24.0 * r6_2 - 48.0) / (r6_2 * r6_2 * r2_2)) * dt;
       if (r2_2 > CL2) df_2 = 0.0;
-      jb_2 = j_2;
-      dxb_2 = dx_2;
-      dyb_2 = dy_2;
-      dzb_2 = dz_2;
 
       const double dx_3 = dxa_3;
       const double dy_3 = dya_3;
@@ -632,10 +624,6 @@ force_sorted_swp_intrin(void) {
       const double r6_3 = r2_3 * r2_3 * r2_3;
       df_3 = ((24.0 * r6_3 - 48.0) / (r6_3 * r6_3 * r2_3)) * dt;
       if (r2_3 > CL2) df_3 = 0.0;
-      jb_3 = j_3;
-      dxb_3 = dx_3;
-      dyb_3 = dy_3;
-      dzb_3 = dz_3;
 
       const double dx_4 = dxa_4;
       const double dy_4 = dya_4;
@@ -675,12 +663,26 @@ force_sorted_swp_intrin(void) {
       v4df vdf = (vc24 * vr6 - vc48) / (vr6 * vr6 * vr2);
       v4df mask = vcl2 - vr2;
       vdf = _mm256_blendv_pd(vdf, vzero, mask);      
+      /*
       print256(vdf);
       p4(df);
       exit(1);
+      */
 
-
+      jb_1 = j_1;
+      jb_2 = j_2;
+      jb_3 = j_3;
       jb_4 = j_4;
+
+      dxb_1 = dx_1;
+      dyb_1 = dy_1;
+      dzb_1 = dz_1;
+      dxb_2 = dx_2;
+      dyb_2 = dy_2;
+      dzb_2 = dz_2;
+      dxb_3 = dx_3;
+      dyb_3 = dy_3;
+      dzb_3 = dz_3;
       dxb_4 = dx_4;
       dyb_4 = dy_4;
       dzb_4 = dz_4;

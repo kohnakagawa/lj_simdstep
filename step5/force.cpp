@@ -4,6 +4,7 @@
 #include <fstream>
 #include <random>
 #include <math.h>
+#include <assert.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 //----------------------------------------------------------------------
@@ -392,9 +393,10 @@ force_sorted(void) {
       double dy = q[j][Y] - qy_key;
       double dz = q[j][Z] - qz_key;
       double r2 = (dx * dx + dy * dy + dz * dz);
-      if (r2 > CL2) continue;
+      //if (r2 > CL2) continue;
       double r6 = r2 * r2 * r2;
       double df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+      if (r2 > CL2) df=0.0;
       pfx += df * dx;
       pfy += df * dy;
       pfz += df * dz;
@@ -429,7 +431,6 @@ force_sorted_swp(void) {
 
     const int np = number_of_partners[i];
     for (int k = kp; k < np + kp; k++) {
-
       const double dx = dxa;
       const double dy = dya;
       const double dz = dza;
@@ -497,13 +498,13 @@ force_sorted_swp_intrin(void) {
     double dxb_4 = 0.0, dyb_4 = 0.0, dzb_4 = 0.0;
     int jb_1 = 0, jb_2 = 0, jb_3 = 0, jb_4 = 0;
     const int np = number_of_partners[i];
-    for (int k = kp; k < np + kp; k++) {
+    for (int k = 0; k < (np/4)*4; k+=4) {
       const double dx_1 = dxa_1;
       const double dy_1 = dya_1;
       const double dz_1 = dza_1;
       double r2_1 = (dx_1 * dx_1 + dy_1 * dy_1 + dz_1 * dz_1);
       const int j_1 = ja_1;
-      ja_1 = sorted_list[k + 1];
+      ja_1 = sorted_list[kp + k + 4];
       dxa_1 = q[ja_1][X] - qx_key;
       dya_1 = q[ja_1][Y] - qy_key;
       dza_1 = q[ja_1][Z] - qz_key;
@@ -520,13 +521,129 @@ force_sorted_swp_intrin(void) {
       dxb_1 = dx_1;
       dyb_1 = dy_1;
       dzb_1 = dz_1;
+
+      const double dx_2 = dxa_2;
+      const double dy_2 = dya_2;
+      const double dz_2 = dza_2;
+      double r2_2 = (dx_2 * dx_2 + dy_2 * dy_2 + dz_2 * dz_2);
+      const int j_2 = ja_2;
+      ja_2 = sorted_list[kp + k + 5];
+      dxa_2 = q[ja_2][X] - qx_key;
+      dya_2 = q[ja_2][Y] - qy_key;
+      dza_2 = q[ja_2][Z] - qz_key;
+      pfx += df_2 * dxb_2;
+      pfy += df_2 * dyb_2;
+      pfz += df_2 * dzb_2;
+      p[jb_2][X] -= df_2 * dxb_2;
+      p[jb_2][Y] -= df_2 * dyb_2;
+      p[jb_2][Z] -= df_2 * dzb_2;
+      const double r6_2 = r2_2 * r2_2 * r2_2;
+      df_2 = ((24.0 * r6_2 - 48.0) / (r6_2 * r6_2 * r2_2)) * dt;
+      if (r2_2 > CL2) df_2 = 0.0;
+      jb_2 = j_2;
+      dxb_2 = dx_2;
+      dyb_2 = dy_2;
+      dzb_2 = dz_2;
+
+      const double dx_3 = dxa_3;
+      const double dy_3 = dya_3;
+      const double dz_3 = dza_3;
+      double r2_3 = (dx_3 * dx_3 + dy_3 * dy_3 + dz_3 * dz_3);
+      const int j_3 = ja_3;
+      ja_3 = sorted_list[kp + k + 6];
+      dxa_3 = q[ja_3][X] - qx_key;
+      dya_3 = q[ja_3][Y] - qy_key;
+      dza_3 = q[ja_3][Z] - qz_key;
+      pfx += df_3 * dxb_3;
+      pfy += df_3 * dyb_3;
+      pfz += df_3 * dzb_3;
+      p[jb_3][X] -= df_3 * dxb_3;
+      p[jb_3][Y] -= df_3 * dyb_3;
+      p[jb_3][Z] -= df_3 * dzb_3;
+      const double r6_3 = r2_3 * r2_3 * r2_3;
+      df_3 = ((24.0 * r6_3 - 48.0) / (r6_3 * r6_3 * r2_3)) * dt;
+      if (r2_3 > CL2) df_3 = 0.0;
+      jb_3 = j_3;
+      dxb_3 = dx_3;
+      dyb_3 = dy_3;
+      dzb_3 = dz_3;
+
+      const double dx_4 = dxa_4;
+      const double dy_4 = dya_4;
+      const double dz_4 = dza_4;
+      double r2_4 = (dx_4 * dx_4 + dy_4 * dy_4 + dz_4 * dz_4);
+      const int j_4 = ja_4;
+      ja_4 = sorted_list[kp + k + 7];
+      dxa_4 = q[ja_4][X] - qx_key;
+      dya_4 = q[ja_4][Y] - qy_key;
+      dza_4 = q[ja_4][Z] - qz_key;
+      pfx += df_4 * dxb_4;
+      pfy += df_4 * dyb_4;
+      pfz += df_4 * dzb_4;
+      p[jb_4][X] -= df_4 * dxb_4;
+      p[jb_4][Y] -= df_4 * dyb_4;
+      p[jb_4][Z] -= df_4 * dzb_4;
+      const double r6_4 = r2_4 * r2_4 * r2_4;
+      df_4 = ((24.0 * r6_4 - 48.0) / (r6_4 * r6_4 * r2_4)) * dt;
+      if (r2_4 > CL2) df_4 = 0.0;
+      jb_4 = j_4;
+      dxb_4 = dx_4;
+      dyb_4 = dy_4;
+      dzb_4 = dz_4;
     }
+    p[i][X] += pfx;
+    p[i][Y] += pfy;
+    p[i][Z] += pfz;
+
     p[jb_1][X] -= df_1 * dxb_1;
     p[jb_1][Y] -= df_1 * dyb_1;
     p[jb_1][Z] -= df_1 * dzb_1;
-    p[i][X] += pfx + df_1 * dxb_1;
-    p[i][Y] += pfy + df_1 * dyb_1;
-    p[i][Z] += pfz + df_1 * dzb_1;
+    p[i][X] += df_1 * dxb_1;
+    p[i][Y] += df_1 * dyb_1;
+    p[i][Z] += df_1 * dzb_1;
+
+    p[jb_2][X] -= df_2 * dxb_2;
+    p[jb_2][Y] -= df_2 * dyb_2;
+    p[jb_2][Z] -= df_2 * dzb_2;
+    p[i][X] += df_2 * dxb_2;
+    p[i][Y] += df_2 * dyb_2;
+    p[i][Z] += df_2 * dzb_2;
+
+    p[jb_3][X] -= df_3 * dxb_3;
+    p[jb_3][Y] -= df_3 * dyb_3;
+    p[jb_3][Z] -= df_3 * dzb_3;
+    p[i][X] += df_3 * dxb_3;
+    p[i][Y] += df_3 * dyb_3;
+    p[i][Z] += df_3 * dzb_3;
+
+    p[jb_4][X] -= df_4 * dxb_4;
+    p[jb_4][Y] -= df_4 * dyb_4;
+    p[jb_4][Z] -= df_4 * dzb_4;
+    p[i][X] += df_4 * dxb_4;
+    p[i][Y] += df_4 * dyb_4;
+    p[i][Z] += df_4 * dzb_4;
+    pfx = 0.0;
+    pfy = 0.0;
+    pfz = 0.0;
+    for (int k = (np/4)*4; k < np; k++) {
+      const int j = sorted_list[k+kp];
+      double dx = q[j][X] - qx_key;
+      double dy = q[j][Y] - qy_key;
+      double dz = q[j][Z] - qz_key;
+      double r2 = (dx * dx + dy * dy + dz * dz);
+      double r6 = r2 * r2 * r2;
+      double df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+      if (r2 > CL2) df=0.0;
+      pfx += df * dx;
+      pfy += df * dy;
+      pfz += df * dz;
+      p[j][X] -= df * dx;
+      p[j][Y] -= df * dy;
+      p[j][Z] -= df * dz;
+    }
+    p[i][X] += pfx;
+    p[i][Y] += pfy;
+    p[i][Z] += pfz;
   }
 }
 //----------------------------------------------------------------------
@@ -685,6 +802,9 @@ main(void) {
   sortpair();
 #ifdef PAIR
   measure(&force_pair, "pair");
+  print_result();
+#elif SORTED
+  measure(&force_sorted, "sorted");
   print_result();
 #elif S_INTRIN
   measure(&force_sorted_intrin, "sorted_intrin");

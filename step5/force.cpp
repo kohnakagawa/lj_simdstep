@@ -463,6 +463,58 @@ force_sorted_swp(void) {
 }
 //----------------------------------------------------------------------
 void
+force_sorted_swp_intrin(void) {
+  const int pn = particle_number;
+  for (int i = 0; i < pn; i++) {
+    const double qx_key = q[i][X];
+    const double qy_key = q[i][Y];
+    const double qz_key = q[i][Z];
+    double pfx = 0;
+    double pfy = 0;
+    double pfz = 0;
+    const int kp = pointer[i];
+    int j_a = sorted_list[kp];
+    double dx_a = q[j_a][X] - qx_key;
+    double dy_a = q[j_a][Y] - qy_key;
+    double dz_a = q[j_a][Z] - qz_key;
+    double df = 0.0;
+    double dx_b = 0.0, dy_b = 0.0, dz_b = 0.0;
+    int j_b = 0;
+    const int np = number_of_partners[i];
+    for (int k = kp; k < np + kp; k++) {
+      const double dx = dx_a;
+      const double dy = dy_a;
+      const double dz = dz_a;
+      double r2 = (dx * dx + dy * dy + dz * dz);
+      const int j = j_a;
+      j_a = sorted_list[k + 1];
+      dx_a = q[j_a][X] - qx_key;
+      dy_a = q[j_a][Y] - qy_key;
+      dz_a = q[j_a][Z] - qz_key;
+      if (r2 > CL2)continue;
+      pfx += df * dx_b;
+      pfy += df * dy_b;
+      pfz += df * dz_b;
+      p[j_b][X] -= df * dx_b;
+      p[j_b][Y] -= df * dy_b;
+      p[j_b][Z] -= df * dz_b;
+      const double r6 = r2 * r2 * r2;
+      df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+      j_b = j;
+      dx_b = dx;
+      dy_b = dy;
+      dz_b = dz;
+    }
+    p[j_b][X] -= df * dx_b;
+    p[j_b][Y] -= df * dy_b;
+    p[j_b][Z] -= df * dz_b;
+    p[i][X] += pfx + df * dx_b;
+    p[i][Y] += pfy + df * dy_b;
+    p[i][Z] += pfz + df * dz_b;
+  }
+}
+//----------------------------------------------------------------------
+void
 force_sorted_intrin(void) {
   const v4df vzero = _mm256_set_pd(0, 0, 0, 0);
   const v4df vcl2 = _mm256_set_pd(CL2, CL2, CL2, CL2);
@@ -624,6 +676,9 @@ main(void) {
 #elif S_SWP
   measure(&force_sorted_swp, "sorted_swp");
   print_result();
+#elif S_SWP_INTRIN
+  measure(&force_sorted_swp_intrin, "sorted_swp_intrin");
+  print_result();
 #elif P_SWP
   measure(&force_pair_swp, "pair_swp");
   print_result();
@@ -637,6 +692,7 @@ main(void) {
   measure(&force_sorted, "sorted");
   measure(&force_sorted_swp, "sorted_swp");
   measure(&force_sorted_intrin, "sorted_intrin");
+  measure(&force_sorted_swp_intrin, "sorted_swp_intrin");
 #endif
 }
 //----------------------------------------------------------------------

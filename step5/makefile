@@ -17,13 +17,16 @@ p_intrin.out: force.cpp
 s_intrin.out: force.cpp
 	icpc -O3 -xHOST -std=c++11 -DS_INTRIN $< -o $@
 
+s_intrin_swp.out: force.cpp
+	icpc -O3 -xHOST -std=c++11 -DS_SWP_INTRIN $< -o $@
+
 s_swp.out: force.cpp
 	icpc -O3 -xHOST -std=c++11 -DS_SWP $< -o $@
 
 clean:
 	rm -f $(TARGET)
 
-test: p_intrin.out s_intrin.out
-	./p_intrin.out > p_intrin.txt
+test: s_intrin.out s_intrin_swp.out
+	./s_intrin_swp.out > s_intrin_swp.txt
 	./s_intrin.out > s_intrin.txt
-	diff p_intrin.txt s_intrin.txt
+	diff s_intrin_swp.txt s_intrin.txt

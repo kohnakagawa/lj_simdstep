@@ -72,7 +72,7 @@ register_pair(int index1, int index2) {
 }
 //----------------------------------------------------------------------
 void
-sortpair(void){
+sortpair(void) {
   const int pn = particle_number;
   int pos = 0;
   pointer[0] = 0;
@@ -123,13 +123,13 @@ init(void) {
   for (int iz = 0; iz < sz; iz++) {
     for (int iy = 0; iy < sy; iy++) {
       for (int ix = 0; ix < sx; ix++) {
-        double x = ix*s;
-        double y = iy*s;
-        double z = iz*s;
-        add_particle(x     ,y   ,z);
-        add_particle(x     ,y+hs,z+hs);
-        add_particle(x+hs  ,y   ,z+hs);
-        add_particle(x+hs  ,y+hs,z);
+        double x = ix * s;
+        double y = iy * s;
+        double z = iz * s;
+        add_particle(x     , y   , z);
+        add_particle(x     , y + hs, z + hs);
+        add_particle(x + hs  , y   , z + hs);
+        add_particle(x + hs  , y + hs, z);
       }
     }
   }
@@ -141,8 +141,8 @@ init(void) {
 }
 //----------------------------------------------------------------------
 void
-force_pair(void){
-  for(int k=0;k<number_of_pairs;k++){
+force_pair(void) {
+  for (int k = 0; k < number_of_pairs; k++) {
     const int i = i_particles[k];
     const int j = j_particles[k];
     double dx = q[j][X] - q[i][X];
@@ -162,20 +162,20 @@ force_pair(void){
 }
 //----------------------------------------------------------------------
 void
-force_pair_swp(void){
+force_pair_swp(void) {
   int k = 0;
   int i_a = i_particles[k];
   int j_a = j_particles[k];
   double dx_b = q[j_a][X] - q[i_a][X];
   double dy_b = q[j_a][Y] - q[i_a][Y];
   double dz_b = q[j_a][Z] - q[i_a][Z];
-  double dx_a,dy_a,dz_a;
+  double dx_a, dy_a, dz_a;
   int i_b, j_b;
   double df;
-  for(k=1;k<number_of_pairs;k++){
-    dx_a = dx_b; 
-    dy_a = dy_b; 
-    dz_a = dz_b; 
+  for (k = 1; k < number_of_pairs; k++) {
+    dx_a = dx_b;
+    dy_a = dy_b;
+    dz_a = dz_b;
     i_b = i_particles[k];
     j_b = j_particles[k];
     dx_b = q[j_b][X] - q[i_b][X];
@@ -184,7 +184,7 @@ force_pair_swp(void){
     const double r2 = (dx_a * dx_a + dy_a * dy_a + dz_a * dz_a);
     const double r6 = r2 * r2 * r2;
     df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
-    if (r2 > CL2) df=0.0;
+    if (r2 > CL2) df = 0.0;
     p[i_a][X] += df * dx_a;
     p[i_a][Y] += df * dy_a;
     p[i_a][Z] += df * dz_a;
@@ -194,13 +194,13 @@ force_pair_swp(void){
     i_a = i_b;
     j_a = j_b;
   }
-  dx_a = dx_b; 
-  dy_a = dy_b; 
-  dz_a = dz_b; 
+  dx_a = dx_b;
+  dy_a = dy_b;
+  dz_a = dz_b;
   const double r2 = (dx_a * dx_a + dy_a * dy_a + dz_a * dz_a);
   const double r6 = r2 * r2 * r2;
   df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
-  if (r2 > CL2) df=0.0;
+  if (r2 > CL2) df = 0.0;
   p[i_a][X] += df * dx_a;
   p[i_a][Y] += df * dy_a;
   p[i_a][Z] += df * dz_a;
@@ -212,7 +212,7 @@ force_pair_swp(void){
 #define p4(x) printf("%.10f %.10f %.10f %.10f\n",dx_##x,dy_##x,dz_##x,0.0);
 //----------------------------------------------------------------------
 void
-force_pair_intrin(void){
+force_pair_intrin(void) {
   const v4df vzero = _mm256_set_pd(0, 0, 0, 0);
   const v4df vcl2 = _mm256_set_pd(CL2, CL2, CL2, CL2);
   const v4df vc24 = _mm256_set_pd(24 * dt, 24 * dt, 24 * dt, 24 * dt);
@@ -220,12 +220,12 @@ force_pair_intrin(void){
   int k = 0;
   int i_a1 = i_particles[k];
   int j_a1 = j_particles[k];
-  int i_a2 = i_particles[k+1];
-  int j_a2 = j_particles[k+1];
-  int i_a3 = i_particles[k+2];
-  int j_a3 = j_particles[k+2];
-  int i_a4 = i_particles[k+3];
-  int j_a4 = j_particles[k+3];
+  int i_a2 = i_particles[k + 1];
+  int j_a2 = j_particles[k + 1];
+  int i_a3 = i_particles[k + 2];
+  int j_a3 = j_particles[k + 2];
+  int i_a4 = i_particles[k + 3];
+  int j_a4 = j_particles[k + 3];
   v4df vqi_a1 = _mm256_load_pd((double*)(q + i_a1));
   v4df vqj_a1 = _mm256_load_pd((double*)(q + j_a1));
   v4df vdq_b1 = vqj_a1 - vqi_a1;
@@ -253,7 +253,7 @@ force_pair_intrin(void){
   int i_b4, j_b4;
   v4df vdf;
 
-  for(k=4;k<(number_of_pairs)/4*4;k+=4){
+  for (k = 4; k < (number_of_pairs) / 4 * 4; k += 4) {
     vdq_a1 = vdq_b1;
     vdq_a2 = vdq_b2;
     vdq_a3 = vdq_b3;
@@ -261,12 +261,12 @@ force_pair_intrin(void){
 
     i_b1 = i_particles[k];
     j_b1 = j_particles[k];
-    i_b2 = i_particles[k+1];
-    j_b2 = j_particles[k+1];
-    i_b3 = i_particles[k+2];
-    j_b3 = j_particles[k+2];
-    i_b4 = i_particles[k+3];
-    j_b4 = j_particles[k+3];
+    i_b2 = i_particles[k + 1];
+    j_b2 = j_particles[k + 1];
+    i_b3 = i_particles[k + 2];
+    j_b3 = j_particles[k + 2];
+    i_b4 = i_particles[k + 3];
+    j_b4 = j_particles[k + 3];
 
     v4df vqi_b1 = _mm256_load_pd((double*)(q + i_b1));
     v4df vqj_b1 = _mm256_load_pd((double*)(q + j_b1));
@@ -284,26 +284,26 @@ force_pair_intrin(void){
     v4df vqj_b4 = _mm256_load_pd((double*)(q + j_b4));
     vdq_b4 = vqj_b4 - vqi_b4;
 
-    v4df vr2_1x = vdq_a1*vdq_a1; 
+    v4df vr2_1x = vdq_a1 * vdq_a1;
     v4df vr2_1y = _mm256_permute4x64_pd(vr2_1x, 201);
     v4df vr2_1z = _mm256_permute4x64_pd(vr2_1x, 210);
     v4df vr2_1 =  vr2_1x + vr2_1y + vr2_1z;
-    
-    v4df vr2_2x = vdq_a2*vdq_a2; 
+
+    v4df vr2_2x = vdq_a2 * vdq_a2;
     v4df vr2_2y = _mm256_permute4x64_pd(vr2_2x, 201);
     v4df vr2_2z = _mm256_permute4x64_pd(vr2_2x, 210);
     v4df vr2_2 =  vr2_2x + vr2_2y + vr2_2z;
-    
-    v4df vr2_3x = vdq_a3*vdq_a3; 
+
+    v4df vr2_3x = vdq_a3 * vdq_a3;
     v4df vr2_3y = _mm256_permute4x64_pd(vr2_3x, 201);
     v4df vr2_3z = _mm256_permute4x64_pd(vr2_3x, 210);
     v4df vr2_3 =  vr2_3x + vr2_3y + vr2_3z;
 
-    v4df vr2_4x = vdq_a4*vdq_a4; 
+    v4df vr2_4x = vdq_a4 * vdq_a4;
     v4df vr2_4y = _mm256_permute4x64_pd(vr2_4x, 201);
     v4df vr2_4z = _mm256_permute4x64_pd(vr2_4x, 210);
     v4df vr2_4 =  vr2_4x + vr2_4y + vr2_4z;
-    
+
     v4df vr2_13 = _mm256_unpacklo_pd(vr2_1, vr2_3);
     v4df vr2_24 = _mm256_unpacklo_pd(vr2_2, vr2_4);
     v4df vr2 = _mm256_shuffle_pd(vr2_13, vr2_24, 12);
@@ -320,31 +320,31 @@ force_pair_intrin(void){
 
     v4df vpi_1 = _mm256_load_pd((double*)(p + i_a1));
     vpi_1 += vdq_a1 * vdf_1;
-    _mm256_store_pd((double*)(p + i_a1),vpi_1);
+    _mm256_store_pd((double*)(p + i_a1), vpi_1);
     v4df vpj_1 = _mm256_load_pd((double*)(p + j_a1));
     vpj_1 -= vdq_a1 * vdf_1;
-    _mm256_store_pd((double*)(p + j_a1),vpj_1);
+    _mm256_store_pd((double*)(p + j_a1), vpj_1);
 
     v4df vpi_2 = _mm256_load_pd((double*)(p + i_a2));
     vpi_2 += vdq_a2 * vdf_2;
-    _mm256_store_pd((double*)(p + i_a2),vpi_2);
+    _mm256_store_pd((double*)(p + i_a2), vpi_2);
     v4df vpj_2 = _mm256_load_pd((double*)(p + j_a2));
     vpj_2 -= vdq_a2 * vdf_2;
-    _mm256_store_pd((double*)(p + j_a2),vpj_2);
+    _mm256_store_pd((double*)(p + j_a2), vpj_2);
 
     v4df vpi_3 = _mm256_load_pd((double*)(p + i_a3));
     vpi_3 += vdq_a3 * vdf_3;
-    _mm256_store_pd((double*)(p + i_a3),vpi_3);
+    _mm256_store_pd((double*)(p + i_a3), vpi_3);
     v4df vpj_3 = _mm256_load_pd((double*)(p + j_a3));
     vpj_3 -= vdq_a3 * vdf_3;
-    _mm256_store_pd((double*)(p + j_a3),vpj_3);
+    _mm256_store_pd((double*)(p + j_a3), vpj_3);
 
     v4df vpi_4 = _mm256_load_pd((double*)(p + i_a4));
     vpi_4 += vdq_a4 * vdf_4;
-    _mm256_store_pd((double*)(p + i_a4),vpi_4);
+    _mm256_store_pd((double*)(p + i_a4), vpi_4);
     v4df vpj_4 = _mm256_load_pd((double*)(p + j_a4));
     vpj_4 -= vdq_a4 * vdf_4;
-    _mm256_store_pd((double*)(p + j_a4),vpj_4);
+    _mm256_store_pd((double*)(p + j_a4), vpj_4);
 
     i_a1 = i_b1;
     j_a1 = j_b1;
@@ -355,7 +355,7 @@ force_pair_intrin(void){
     i_a4 = i_b4;
     j_a4 = j_b4;
   }
-  for(k=(number_of_pairs)/4*4-4;k<number_of_pairs;k++){
+  for (k = (number_of_pairs) / 4 * 4 - 4; k < number_of_pairs; k++) {
     const int i = i_particles[k];
     const int j = j_particles[k];
     double dx = q[j][X] - q[i][X];
@@ -375,9 +375,9 @@ force_pair_intrin(void){
 }
 //----------------------------------------------------------------------
 void
-force_sorted(void){
-  const int pn =particle_number;
-  for (int i=0; i<pn; i++) {
+force_sorted(void) {
+  const int pn = particle_number;
+  for (int i = 0; i < pn; i++) {
     const double qx_key = q[i][X];
     const double qy_key = q[i][Y];
     const double qz_key = q[i][Z];
@@ -386,21 +386,21 @@ force_sorted(void){
     double pfy = 0;
     double pfz = 0;
     const int kp = pointer[i];
-    for (int k=0; k<np; k++) {
+    for (int k = 0; k < np; k++) {
       const int j = sorted_list[kp + k];
       double dx = q[j][X] - qx_key;
       double dy = q[j][Y] - qy_key;
       double dz = q[j][Z] - qz_key;
-      double r2 = (dx*dx + dy*dy + dz*dz);
+      double r2 = (dx * dx + dy * dy + dz * dz);
       if (r2 > CL2) continue;
-      double r6 = r2*r2*r2;
-      double df = ((24.0*r6-48.0)/(r6*r6*r2))*dt;
-      pfx += df*dx;
-      pfy += df*dy;
-      pfz += df*dz;
-      p[j][X] -= df*dx;
-      p[j][Y] -= df*dy;
-      p[j][Z] -= df*dz;
+      double r6 = r2 * r2 * r2;
+      double df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
+      pfx += df * dx;
+      pfy += df * dy;
+      pfz += df * dz;
+      p[j][X] -= df * dx;
+      p[j][Y] -= df * dy;
+      p[j][Z] -= df * dz;
     }
     p[i][X] += pfx;
     p[i][Y] += pfy;
@@ -474,9 +474,9 @@ force_sorted_swp_intrin(void) {
     double pfz = 0;
     const int kp = pointer[i];
     int ja_1 = sorted_list[kp];
-    int ja_2 = sorted_list[kp+1];
-    int ja_3 = sorted_list[kp+2];
-    int ja_4 = sorted_list[kp+3];
+    int ja_2 = sorted_list[kp + 1];
+    int ja_3 = sorted_list[kp + 2];
+    int ja_4 = sorted_list[kp + 3];
     double dxa_1 = q[ja_1][X] - qx_key;
     double dya_1 = q[ja_1][Y] - qy_key;
     double dza_1 = q[ja_1][Z] - qz_key;
@@ -515,7 +515,7 @@ force_sorted_swp_intrin(void) {
       p[jb_1][Z] -= df_1 * dzb_1;
       const double r6_1 = r2_1 * r2_1 * r2_1;
       df_1 = ((24.0 * r6_1 - 48.0) / (r6_1 * r6_1 * r2_1)) * dt;
-      if (r2_1 > CL2) df_1=0.0;
+      if (r2_1 > CL2) df_1 = 0.0;
       jb_1 = j_1;
       dxb_1 = dx_1;
       dyb_1 = dy_1;
@@ -641,30 +641,30 @@ measure(void(*pfunc)(), const char *name) {
 }
 //----------------------------------------------------------------------
 void
-loadpair(void){
-  std::ifstream ifs("pair.dat",std::ios::binary);
-  ifs.read((char*)&number_of_pairs,sizeof(int));
-  ifs.read((char*)number_of_partners,sizeof(int)*N);
-  ifs.read((char*)i_particles,sizeof(int)*MAX_PAIRS);
-  ifs.read((char*)j_particles,sizeof(int)*MAX_PAIRS);
+loadpair(void) {
+  std::ifstream ifs("pair.dat", std::ios::binary);
+  ifs.read((char*)&number_of_pairs, sizeof(int));
+  ifs.read((char*)number_of_partners, sizeof(int)*N);
+  ifs.read((char*)i_particles, sizeof(int)*MAX_PAIRS);
+  ifs.read((char*)j_particles, sizeof(int)*MAX_PAIRS);
 }
 //----------------------------------------------------------------------
 void
-savepair(void){
+savepair(void) {
   makepair();
-  std::ofstream ofs("pair.dat",std::ios::binary);
-  ofs.write((char*)&number_of_pairs,sizeof(int));
-  ofs.write((char*)number_of_partners,sizeof(int)*N);
-  ofs.write((char*)i_particles,sizeof(int)*MAX_PAIRS);
-  ofs.write((char*)j_particles,sizeof(int)*MAX_PAIRS);
+  std::ofstream ofs("pair.dat", std::ios::binary);
+  ofs.write((char*)&number_of_pairs, sizeof(int));
+  ofs.write((char*)number_of_partners, sizeof(int)*N);
+  ofs.write((char*)i_particles, sizeof(int)*MAX_PAIRS);
+  ofs.write((char*)j_particles, sizeof(int)*MAX_PAIRS);
 }
 //----------------------------------------------------------------------
 void
-print_result(void){
+print_result(void) {
   for (int i = 0; i < 5; i++) {
     printf("%.10f %.10f %.10f\n", p[i][X], p[i][Y], p[i][Z]);
   }
-  for (int i = particle_number-5; i < particle_number; i++) {
+  for (int i = particle_number - 5; i < particle_number; i++) {
     printf("%.10f %.10f %.10f\n", p[i][X], p[i][Y], p[i][Z]);
   }
 }
@@ -673,11 +673,11 @@ int
 main(void) {
   init();
   struct stat st;
-  int ret = stat("pair.dat",&st);
-  if(ret==0){
+  int ret = stat("pair.dat", &st);
+  if (ret == 0) {
     std::cerr << "A pair-file is found. I use it." << std::endl;
     loadpair();
-  }else{
+  } else {
     std::cerr << "Make pairlist." << std::endl;
     savepair();
   }

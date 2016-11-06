@@ -32,4 +32,4 @@ clean:
 test: s_intrin.out p_swp_intrin.out
 	./p_swp_intrin.out > p_swp_intrin.txt
 	./s_intrin.out > s_intrin.txt
-	diff p_swp_swp_intrin.txt s_intrin.txt
+	diff p_swp_intrin.txt s_intrin.txt

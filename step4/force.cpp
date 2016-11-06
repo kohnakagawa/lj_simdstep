@@ -212,7 +212,7 @@ force_pair_swp(void){
 #define p4(x) printf("%.10f %.10f %.10f %.10f\n",dx_##x,dy_##x,dz_##x,0.0);
 //----------------------------------------------------------------------
 void
-force_pair_intrin(void){
+force_pair_swp_intrin(void){
   const v4df vzero = _mm256_set_pd(0, 0, 0, 0);
   const v4df vcl2 = _mm256_set_pd(CL2, CL2, CL2, CL2);
   const v4df vc24 = _mm256_set_pd(24 * dt, 24 * dt, 24 * dt, 24 * dt);
@@ -628,12 +628,12 @@ main(void) {
   measure(&force_pair_swp, "pair_swp");
   print_result();
 #elif P_INTRIN
-  measure(&force_pair_intrin, "pair_intrin");
+  measure(&force_pair_swp_intrin, "pair_swp_intrin");
   print_result();
 #else
   measure(&force_pair, "pair");
   measure(&force_pair_swp, "pair_swp");
-  measure(&force_pair_intrin, "pair_intrin");
+  measure(&force_pair_swp_intrin, "pair_swp_intrin");
   measure(&force_sorted, "sorted");
   measure(&force_sorted_swp, "sorted_swp");
   measure(&force_sorted_intrin, "sorted_intrin");

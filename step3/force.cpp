@@ -209,7 +209,7 @@ force_pair_swp(void){
 }
 //----------------------------------------------------------------------
 void
-force_pair_intrin(void){
+force_pair_swp_intrin(void){
   int k = 0;
   int i_a1 = i_particles[k];
   int j_a1 = j_particles[k];
@@ -593,25 +593,29 @@ main(void) {
 #ifdef PAIR
   measure(&force_pair, "pair");
   print_result();
-#elif S_INTRIN
-  measure(&force_sorted_intrin, "sorted_intrin");
+#elif P_SWP
+  measure(&force_pair_swp, "pair_swp");
+  print_result();
+#elif P_SWP_INTRIN
+  measure(&force_pair_swp_intrin, "pair_swp_intrin");
+  print_result();
+#elif SORTED
+  measure(&force_sorted, "sorted");
   print_result();
 #elif S_SWP
   measure(&force_sorted_swp, "sorted_swp");
   print_result();
-#elif P_SWP
-  measure(&force_pair_swp, "pair_swp");
-  print_result();
-#elif P_INTRIN
-  measure(&force_pair_intrin, "pair_intrin");
+#elif S_INTRIN
+  measure(&force_sorted_intrin, "sorted_intrin");
   print_result();
 #else
   measure(&force_pair, "pair");
   measure(&force_pair_swp, "pair_swp");
-  measure(&force_pair_intrin, "pair_intrin");
+  measure(&force_pair_swp_intrin, "pair_swp_intrin");
   measure(&force_sorted, "sorted");
   measure(&force_sorted_swp, "sorted_swp");
   measure(&force_sorted_intrin, "sorted_intrin");
 #endif
+
 }
 //----------------------------------------------------------------------

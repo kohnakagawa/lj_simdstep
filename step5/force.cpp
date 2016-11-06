@@ -586,31 +586,18 @@ force_sorted_swp_intrin(void) {
       dxa_1 = q[ja_1][X] - qix;
       dya_1 = q[ja_1][Y] - qiy;
       dza_1 = q[ja_1][Z] - qiz;
-      pfx += df_1 * dxb_1;
-      pfy += df_1 * dyb_1;
-      pfz += df_1 * dzb_1;
 
       vqj_1 = _mm256_load_pd((double*)(q + ja_1));
       vdqa_1 = vqj_1 - vqi;
       vpf += vdf_1 * vdqb_1;
-      //print256(vpf);
-      //pv(pf,);
 
       v4df vpjb_1 = _mm256_load_pd((double*)(p + jb_1));
       vpjb_1 -= vdf_1 * vdqb_1;
       _mm256_store_pd((double*)(p + jb_1), vpjb_1);
-      /*
-      p[jb_1][X] -= df_1 * dxb_1;
-      p[jb_1][Y] -= df_1 * dyb_1;
-      p[jb_1][Z] -= df_1 * dzb_1;
-      */
 
       dxa_2 = q[ja_2][X] - qix;
       dya_2 = q[ja_2][Y] - qiy;
       dza_2 = q[ja_2][Z] - qiz;
-      pfx += df_2 * dxb_2;
-      pfy += df_2 * dyb_2;
-      pfz += df_2 * dzb_2;
 
       vqj_2 = _mm256_load_pd((double*)(q + ja_2));
       vdqa_2 = vqj_2 - vqi;
@@ -619,18 +606,10 @@ force_sorted_swp_intrin(void) {
       v4df vpjb_2 = _mm256_load_pd((double*)(p + jb_2));
       vpjb_2 -= vdf_2 * vdqb_2;
       _mm256_store_pd((double*)(p + jb_2), vpjb_2);
-/*
-      p[jb_2][X] -= df_2 * dxb_2;
-      p[jb_2][Y] -= df_2 * dyb_2;
-      p[jb_2][Z] -= df_2 * dzb_2;
-      */
 
       dxa_3 = q[ja_3][X] - qix;
       dya_3 = q[ja_3][Y] - qiy;
       dza_3 = q[ja_3][Z] - qiz;
-      pfx += df_3 * dxb_3;
-      pfy += df_3 * dyb_3;
-      pfz += df_3 * dzb_3;
 
       vqj_3 = _mm256_load_pd((double*)(q + ja_3));
       vdqa_3 = vqj_3 - vqi;
@@ -639,33 +618,18 @@ force_sorted_swp_intrin(void) {
       v4df vpjb_3 = _mm256_load_pd((double*)(p + jb_3));
       vpjb_3 -= vdf_3 * vdqb_3;
       _mm256_store_pd((double*)(p + jb_3), vpjb_3);
-      /*
-      p[jb_3][X] -= df_3 * dxb_3;
-      p[jb_3][Y] -= df_3 * dyb_3;
-      p[jb_3][Z] -= df_3 * dzb_3;
-      */
 
       dxa_4 = q[ja_4][X] - qix;
       dya_4 = q[ja_4][Y] - qiy;
       dza_4 = q[ja_4][Z] - qiz;
-      pfx += df_4 * dxb_4;
-      pfy += df_4 * dyb_4;
-      pfz += df_4 * dzb_4;
 
       vqj_4 = _mm256_load_pd((double*)(q + ja_4));
       vdqa_4 = vqj_4 - vqi;
       vpf += vdf_4 * vdqb_4;
-      //print256(vpf);
-      //pv(pf,);
 
       v4df vpjb_4 = _mm256_load_pd((double*)(p + jb_4));
       vpjb_4 -= vdf_4 * vdqb_4;
       _mm256_store_pd((double*)(p + jb_4), vpjb_4);
-/*
-      p[jb_4][X] -= df_4 * dxb_4;
-      p[jb_4][Y] -= df_4 * dyb_4;
-      p[jb_4][Z] -= df_4 * dzb_4;
-      */
 
       const double r6_1 = r2_1 * r2_1 * r2_1;
       df_1 = ((24.0 * r6_1 - 48.0) / (r6_1 * r6_1 * r2_1)) * dt;
@@ -714,42 +678,66 @@ force_sorted_swp_intrin(void) {
       vdqb_4 = vdq_4;
     }
 
+
+    v4df vdf_1 = _mm256_permute4x64_pd(vdf, 0);
+    v4df vdf_2 = _mm256_permute4x64_pd(vdf, 85);
+    v4df vdf_3 = _mm256_permute4x64_pd(vdf, 170);
+    v4df vdf_4 = _mm256_permute4x64_pd(vdf, 255);
+
+    v4df vpjb_1 = _mm256_load_pd((double*)(p + jb_1));
+    vpjb_1 -= vdf_1 * vdqb_1;
+    _mm256_store_pd((double*)(p + jb_1), vpjb_1);
+
+    v4df vpjb_2 = _mm256_load_pd((double*)(p + jb_2));
+    vpjb_2 -= vdf_2 * vdqb_2;
+    _mm256_store_pd((double*)(p + jb_2), vpjb_2);
+
+    v4df vpjb_3 = _mm256_load_pd((double*)(p + jb_3));
+    vpjb_3 -= vdf_3 * vdqb_3;
+    _mm256_store_pd((double*)(p + jb_3), vpjb_3);
+
+    v4df vpjb_4 = _mm256_load_pd((double*)(p + jb_4));
+    vpjb_4 -= vdf_4 * vdqb_4;
+    _mm256_store_pd((double*)(p + jb_4), vpjb_4);
+
     v4df vpi= _mm256_load_pd((double*)(p + i));
+    vpf += vdf_1 * vdqb_1;
+    vpf += vdf_2 * vdqb_2;
+    vpf += vdf_3 * vdqb_3;
+    vpf += vdf_4 * vdqb_4;
     vpi += vpf;
     _mm256_store_pd((double*)(p + i), vpi);
-    /*
-    p[i][X] += pfx;
-    p[i][Y] += pfy;
-    p[i][Z] += pfz;
-    */
 
+/*
     p[jb_1][X] -= df_1 * dxb_1;
     p[jb_1][Y] -= df_1 * dyb_1;
     p[jb_1][Z] -= df_1 * dzb_1;
+
     p[i][X] += df_1 * dxb_1;
     p[i][Y] += df_1 * dyb_1;
     p[i][Z] += df_1 * dzb_1;
+    */
 
+/*
     p[jb_2][X] -= df_2 * dxb_2;
     p[jb_2][Y] -= df_2 * dyb_2;
     p[jb_2][Z] -= df_2 * dzb_2;
     p[i][X] += df_2 * dxb_2;
     p[i][Y] += df_2 * dyb_2;
     p[i][Z] += df_2 * dzb_2;
-
     p[jb_3][X] -= df_3 * dxb_3;
     p[jb_3][Y] -= df_3 * dyb_3;
     p[jb_3][Z] -= df_3 * dzb_3;
     p[i][X] += df_3 * dxb_3;
     p[i][Y] += df_3 * dyb_3;
     p[i][Z] += df_3 * dzb_3;
-
     p[jb_4][X] -= df_4 * dxb_4;
     p[jb_4][Y] -= df_4 * dyb_4;
     p[jb_4][Z] -= df_4 * dzb_4;
     p[i][X] += df_4 * dxb_4;
     p[i][Y] += df_4 * dyb_4;
     p[i][Z] += df_4 * dzb_4;
+    */
     pfx = 0.0;
     pfy = 0.0;
     pfz = 0.0;
@@ -877,8 +865,8 @@ force_sorted_intrin(void) {
 void
 measure(void(*pfunc)(), const char *name) {
   double st = myclock();
-  //const int LOOP = 100;
-  const int LOOP = 1;
+  const int LOOP = 100;
+  //const int LOOP = 1;
   for (int i = 0; i < LOOP; i++) {
     pfunc();
   }

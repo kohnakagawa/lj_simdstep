@@ -9,7 +9,6 @@
 #include <sys/stat.h>
 //----------------------------------------------------------------------
 const double density = 1.0;
-//const double density = 0.5;
 const int N = 400000;
 const int MAX_PAIRS = 30 * N;
 double L = 50.0;
@@ -472,51 +471,23 @@ force_sorted_swp_intrin(void) {
   const v4df vc24 = _mm256_set_pd(24 * dt, 24 * dt, 24 * dt, 24 * dt);
   const v4df vc48 = _mm256_set_pd(48 * dt, 48 * dt, 48 * dt, 48 * dt);
   for (int i = 0; i < pn; i++) {
-    const double qix = q[i][X];
-    const double qiy = q[i][Y];
-    const double qiz = q[i][Z];
     const v4df vqi= _mm256_load_pd((double*)(q + i));
-    double pfx = 0;
-    double pfy = 0;
-    double pfz = 0;
     v4df vpf = _mm256_set_pd(0.0,0.0,0.0,0.0);
-
     const int kp = pointer[i];
     int ja_1 = sorted_list[kp];
     int ja_2 = sorted_list[kp + 1];
     int ja_3 = sorted_list[kp + 2];
     int ja_4 = sorted_list[kp + 3];
-    double dxa_1 = q[ja_1][X] - qix;
-    double dya_1 = q[ja_1][Y] - qiy;
-    double dza_1 = q[ja_1][Z] - qiz;
     v4df vqj_1= _mm256_load_pd((double*)(q + ja_1));
     v4df vdqa_1 = vqj_1 - vqi;
-
-    double dxa_2 = q[ja_2][X] - qix;
-    double dya_2 = q[ja_2][Y] - qiy;
-    double dza_2 = q[ja_2][Z] - qiz;
     v4df vqj_2= _mm256_load_pd((double*)(q + ja_2));
     v4df vdqa_2 = vqj_2 - vqi;
-
-    double dxa_3 = q[ja_3][X] - qix;
-    double dya_3 = q[ja_3][Y] - qiy;
-    double dza_3 = q[ja_3][Z] - qiz;
     v4df vqj_3= _mm256_load_pd((double*)(q + ja_3));
     v4df vdqa_3 = vqj_3 - vqi;
-
-    double dxa_4 = q[ja_4][X] - qix;
-    double dya_4 = q[ja_4][Y] - qiy;
-    double dza_4 = q[ja_4][Z] - qiz;
     v4df vqj_4= _mm256_load_pd((double*)(q + ja_4));
     v4df vdqa_4 = vqj_4 - vqi;
 
-    double df_1 = 0.0 , df_2 = 0.0, df_3 = 0.0, df_4 = 0.0;
     v4df vdf = _mm256_set_pd(0.0,0.0,0.0,0.0);
-
-    double dxb_1 = 0.0, dyb_1 = 0.0, dzb_1 = 0.0;
-    double dxb_2 = 0.0, dyb_2 = 0.0, dzb_2 = 0.0;
-    double dxb_3 = 0.0, dyb_3 = 0.0, dzb_3 = 0.0;
-    double dxb_4 = 0.0, dyb_4 = 0.0, dzb_4 = 0.0;
 
     v4df vdqb_1 = _mm256_set_pd(0.0,0.0,0.0,0.0);
     v4df vdqb_2 = _mm256_set_pd(0.0,0.0,0.0,0.0);
@@ -614,8 +585,6 @@ force_sorted_swp_intrin(void) {
       vdqb_3 = vdq_3;
       vdqb_4 = vdq_4;
     }
-
-
     v4df vdf_1 = _mm256_permute4x64_pd(vdf, 0);
     v4df vdf_2 = _mm256_permute4x64_pd(vdf, 85);
     v4df vdf_3 = _mm256_permute4x64_pd(vdf, 170);
@@ -644,9 +613,12 @@ force_sorted_swp_intrin(void) {
     vpf += vdf_4 * vdqb_4;
     vpi += vpf;
     _mm256_store_pd((double*)(p + i), vpi);
-    pfx = 0.0;
-    pfy = 0.0;
-    pfz = 0.0;
+    const double qix = q[i][X];
+    const double qiy = q[i][Y];
+    const double qiz = q[i][Z];
+    double pfx = 0.0;
+    double pfy = 0.0;
+    double pfz = 0.0;
     for (int k = (np/4)*4; k < np; k++) {
       const int j = sorted_list[k+kp];
       double dx = q[j][X] - qix;

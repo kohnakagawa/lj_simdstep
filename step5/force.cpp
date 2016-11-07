@@ -251,7 +251,6 @@ force_pair_swp_intrin(void) {
   int i_b2, j_b2;
   int i_b3, j_b3;
   int i_b4, j_b4;
-  v4df vdf;
 
   for (k = 4; k < (number_of_pairs) / 4 * 4; k += 4) {
     vdq_a1 = vdq_b1;
@@ -345,7 +344,7 @@ force_pair_swp_intrin(void) {
     v4df vpj_4 = _mm256_load_pd((double*)(p + j_a4));
     vpj_4 -= vdq_a4 * vdf_4;
     _mm256_store_pd((double*)(p + j_a4), vpj_4);
-
+    
     i_a1 = i_b1;
     j_a1 = j_b1;
     i_a2 = i_b2;
@@ -471,32 +470,32 @@ force_sorted_swp_intrin(void) {
   const v4df vc24 = _mm256_set_pd(24 * dt, 24 * dt, 24 * dt, 24 * dt);
   const v4df vc48 = _mm256_set_pd(48 * dt, 48 * dt, 48 * dt, 48 * dt);
   for (int i = 0; i < pn; i++) {
-    const v4df vqi= _mm256_load_pd((double*)(q + i));
-    v4df vpf = _mm256_set_pd(0.0,0.0,0.0,0.0);
+    const v4df vqi = _mm256_load_pd((double*)(q + i));
+    v4df vpf = _mm256_set_pd(0.0, 0.0, 0.0, 0.0);
     const int kp = pointer[i];
     int ja_1 = sorted_list[kp];
     int ja_2 = sorted_list[kp + 1];
     int ja_3 = sorted_list[kp + 2];
     int ja_4 = sorted_list[kp + 3];
-    v4df vqj_1= _mm256_load_pd((double*)(q + ja_1));
+    v4df vqj_1 = _mm256_load_pd((double*)(q + ja_1));
     v4df vdqa_1 = vqj_1 - vqi;
-    v4df vqj_2= _mm256_load_pd((double*)(q + ja_2));
+    v4df vqj_2 = _mm256_load_pd((double*)(q + ja_2));
     v4df vdqa_2 = vqj_2 - vqi;
-    v4df vqj_3= _mm256_load_pd((double*)(q + ja_3));
+    v4df vqj_3 = _mm256_load_pd((double*)(q + ja_3));
     v4df vdqa_3 = vqj_3 - vqi;
-    v4df vqj_4= _mm256_load_pd((double*)(q + ja_4));
+    v4df vqj_4 = _mm256_load_pd((double*)(q + ja_4));
     v4df vdqa_4 = vqj_4 - vqi;
 
-    v4df vdf = _mm256_set_pd(0.0,0.0,0.0,0.0);
+    v4df vdf = _mm256_set_pd(0.0, 0.0, 0.0, 0.0);
 
-    v4df vdqb_1 = _mm256_set_pd(0.0,0.0,0.0,0.0);
-    v4df vdqb_2 = _mm256_set_pd(0.0,0.0,0.0,0.0);
-    v4df vdqb_3 = _mm256_set_pd(0.0,0.0,0.0,0.0);
-    v4df vdqb_4 = _mm256_set_pd(0.0,0.0,0.0,0.0);
+    v4df vdqb_1 = _mm256_set_pd(0.0, 0.0, 0.0, 0.0);
+    v4df vdqb_2 = _mm256_set_pd(0.0, 0.0, 0.0, 0.0);
+    v4df vdqb_3 = _mm256_set_pd(0.0, 0.0, 0.0, 0.0);
+    v4df vdqb_4 = _mm256_set_pd(0.0, 0.0, 0.0, 0.0);
 
     int jb_1 = 0, jb_2 = 0, jb_3 = 0, jb_4 = 0;
     const int np = number_of_partners[i];
-    for (int k = 0; k < (np/4)*4; k+=4) {
+    for (int k = 0; k < (np / 4) * 4; k += 4) {
       const int j_1 = ja_1;
       const int j_2 = ja_2;
       const int j_3 = ja_3;
@@ -511,22 +510,22 @@ force_sorted_swp_intrin(void) {
       ja_3 = sorted_list[kp + k + 6];
       ja_4 = sorted_list[kp + k + 7];
 
-      v4df vr2s_1 = vdq_1*vdq_1;
+      v4df vr2s_1 = vdq_1 * vdq_1;
       v4df vr2t_1 = _mm256_permute4x64_pd(vr2s_1, 201);
       v4df vr2u_1 = _mm256_permute4x64_pd(vr2s_1, 210);
       v4df vr2_1 = vr2s_1 + vr2t_1 + vr2u_1;
- 
-      v4df vr2s_2 = vdq_2*vdq_2;
+
+      v4df vr2s_2 = vdq_2 * vdq_2;
       v4df vr2t_2 = _mm256_permute4x64_pd(vr2s_2, 201);
       v4df vr2u_2 = _mm256_permute4x64_pd(vr2s_2, 210);
       v4df vr2_2 = vr2s_2 + vr2t_2 + vr2u_2;
 
-      v4df vr2s_3 = vdq_3*vdq_3;
+      v4df vr2s_3 = vdq_3 * vdq_3;
       v4df vr2t_3 = _mm256_permute4x64_pd(vr2s_3, 201);
       v4df vr2u_3 = _mm256_permute4x64_pd(vr2s_3, 210);
       v4df vr2_3 = vr2s_3 + vr2t_3 + vr2u_3;
 
-      v4df vr2s_4 = vdq_4*vdq_4;
+      v4df vr2s_4 = vdq_4 * vdq_4;
       v4df vr2t_4 = _mm256_permute4x64_pd(vr2s_4, 201);
       v4df vr2u_4 = _mm256_permute4x64_pd(vr2s_4, 210);
       v4df vr2_4 = vr2s_4 + vr2t_4 + vr2u_4;
@@ -574,7 +573,7 @@ force_sorted_swp_intrin(void) {
       v4df vr6 = vr2 * vr2 * vr2;
       vdf = (vc24 * vr6 - vc48) / (vr6 * vr6 * vr2);
       v4df mask = vcl2 - vr2;
-      vdf = _mm256_blendv_pd(vdf, vzero, mask);      
+      vdf = _mm256_blendv_pd(vdf, vzero, mask);
 
       jb_1 = j_1;
       jb_2 = j_2;
@@ -606,7 +605,7 @@ force_sorted_swp_intrin(void) {
     vpjb_4 -= vdf_4 * vdqb_4;
     _mm256_store_pd((double*)(p + jb_4), vpjb_4);
 
-    v4df vpi= _mm256_load_pd((double*)(p + i));
+    v4df vpi = _mm256_load_pd((double*)(p + i));
     vpf += vdf_1 * vdqb_1;
     vpf += vdf_2 * vdqb_2;
     vpf += vdf_3 * vdqb_3;
@@ -619,15 +618,15 @@ force_sorted_swp_intrin(void) {
     double pfx = 0.0;
     double pfy = 0.0;
     double pfz = 0.0;
-    for (int k = (np/4)*4; k < np; k++) {
-      const int j = sorted_list[k+kp];
+    for (int k = (np / 4) * 4; k < np; k++) {
+      const int j = sorted_list[k + kp];
       double dx = q[j][X] - qix;
       double dy = q[j][Y] - qiy;
       double dz = q[j][Z] - qiz;
       double r2 = (dx * dx + dy * dy + dz * dz);
       double r6 = r2 * r2 * r2;
       double df = ((24.0 * r6 - 48.0) / (r6 * r6 * r2)) * dt;
-      if (r2 > CL2) df=0.0;
+      if (r2 > CL2) df = 0.0;
       pfx += df * dx;
       pfy += df * dy;
       pfz += df * dz;

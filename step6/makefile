@@ -42,3 +42,5 @@ test: s_intrin.out s_swp_intrin_m_trans.out
 	./s_swp_intrin_m_trans.out > s_swp_intrin_m_trans.txt
 	./s_intrin.out > s_intrin.txt
 	diff s_swp_intrin_m_trans.txt s_intrin.txt
+
+-include makefile.opt

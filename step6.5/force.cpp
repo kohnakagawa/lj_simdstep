@@ -1187,7 +1187,7 @@ main(void) {
   print_result();
 #elif S_SWP_INTRIN_Z
   copy_to_z();
-  measure(&force_sorted_z_swp, "sorted_z");
+  measure(&force_sorted_z_swp, "sorted_z_swp");
   copy_from_z();
   print_result();
 #else

@@ -1,0 +1,56 @@
+|   # | src                                                  | # of insts | type |
+| 792 | const int j_a = sorted_list[kp + k];                 |          2 |      |
+| 793 | v4df vqj_a = _mm256_load_pd((double*)(q + j_a));     |          2 | /    |
+| 794 | v4df vdq_a = (vqj_a - vqi);                          |          1 |      |
+| 795 |                                                      |          0 |      |
+| 796 | const int j_b = sorted_list[kp + k + 1];             |          1 |      |
+| 797 | v4df vqj_b = _mm256_load_pd((double*)(q + j_b));     |          2 | /    |
+| 798 | v4df vdq_b = (vqj_b - vqi);                          |          1 |      |
+| 799 |                                                      |          0 |      |
+| 800 | const int j_c = sorted_list[kp + k + 2];             |          1 |      |
+| 801 | v4df vqj_c = _mm256_load_pd((double*)(q + j_c));     |          2 | /    |
+| 802 | v4df vdq_c = (vqj_c - vqi);                          |          1 |      |
+| 803 |                                                      |          0 |      |
+| 804 | const int j_d = sorted_list[kp + k + 3];             |          1 |      |
+| 805 | v4df vqj_d = _mm256_load_pd((double*)(q + j_d));     |          2 | /    |
+| 806 | v4df vdq_d = (vqj_d - vqi);                          |          1 |      |
+| 807 |                                                      |          0 |      |
+| 808 | v4df tmp0 = _mm256_unpacklo_pd(vdq_a, vdq_b);        |          1 | *    |
+| 809 | v4df tmp1 = _mm256_unpackhi_pd(vdq_a, vdq_b);        |          1 | *    |
+| 810 | v4df tmp2 = _mm256_unpacklo_pd(vdq_c, vdq_d);        |          1 | *    |
+| 811 | v4df tmp3 = _mm256_unpackhi_pd(vdq_c, vdq_d);        |          1 | *    |
+| 812 |                                                      |          0 |      |
+| 813 | v4df vdx = _mm256_permute2f128_pd(tmp0, tmp2, 0x20); |          1 | *    |
+| 814 | v4df vdy = _mm256_permute2f128_pd(tmp1, tmp3, 0x20); |          1 | *    |
+| 815 | v4df vdz = _mm256_permute2f128_pd(tmp0, tmp2, 0x31); |          1 | *    |
+| 816 |                                                      |          0 |      |
+| 817 | v4df vr2 = vdx * vdx + vdy * vdy + vdz * vdz;        |          3 |      |
+| 818 | v4df vr6 = vr2 * vr2 * vr2;                          |          2 |      |
+| 819 | v4df vdf = (vc24 * vr6 - vc48) / (vr6 * vr6 * vr2);  |          5 |      |
+| 820 | v4df mask = vcl2 - vr2;                              |          1 |      |
+| 821 | vdf = _mm256_blendv_pd(vdf, vzero, mask);            |          1 |      |
+| 822 |                                                      |          0 |      |
+| 823 | v4df vdf_a = _mm256_permute4x64_pd(vdf, 0);          |          1 | *    |
+| 824 | v4df vdf_b = _mm256_permute4x64_pd(vdf, 85);         |          1 | *    |
+| 825 | v4df vdf_c = _mm256_permute4x64_pd(vdf, 170);        |          1 | *    |
+| 826 | v4df vdf_d = _mm256_permute4x64_pd(vdf, 255);        |          1 | *    |
+| 827 |                                                      |          0 |      |
+| 828 | v4df vpj_a = _mm256_load_pd((double*)(p + j_a));     |          1 | /    |
+| 829 | vpi += vdq_a * vdf_a;                                |          0 |      |
+| 830 | vpj_a -= vdq_a * vdf_a;                              |          1 |      |
+| 831 | _mm256_store_pd((double*)(p + j_a), vpj_a);          |          1 | /    |
+| 832 |                                                      |          0 |      |
+| 833 | v4df vpj_b = _mm256_load_pd((double*)(p + j_b));     |          1 | /    |
+| 834 | vpi += vdq_b * vdf_b;                                |          3 |      |
+| 835 | vpj_b -= vdq_b * vdf_b;                              |          1 |      |
+| 836 | _mm256_store_pd((double*)(p + j_b), vpj_b);          |          1 | /    |
+| 837 |                                                      |          0 |      |
+| 838 | v4df vpj_c = _mm256_load_pd((double*)(p + j_c));     |          1 | /    |
+| 839 | vpi += vdq_c * vdf_c;                                |          1 |      |
+| 840 | vpj_c -= vdq_c * vdf_c;                              |          1 |      |
+| 841 | _mm256_store_pd((double*)(p + j_c), vpj_c);          |          1 | /    |
+| 842 |                                                      |          0 |      |
+| 843 | v4df vpj_d = _mm256_load_pd((double*)(p + j_d));     |          1 | /    |
+| 844 | vpi += vdq_d * vdf_d;                                |          1 |      |
+| 845 | vpj_d -= vdq_d * vdf_d;                              |          1 |      |
+| 846 | _mm256_store_pd((double*)(p + j_d), vpj_d);          |          1 | /    |

@@ -17,6 +17,9 @@ knl.out: force.cpp
 knl_swp.out: force.cpp
 	$(CC) $(CPPFLAGS) -DKNL_SWP $< -o $@
 
+knl_gs.out: force.cpp
+	$(CC) $(CPPFLAGS) -DKNL_GS $< -o $@
+
 pair.out: force.cpp
 	$(CC) $(CPPFLAGS) -DPAIR $< -o $@
 
